@@ -1,0 +1,76 @@
+# SwiftLint Configuration - GreenDrop iOS
+
+included:
+  - GreenDrop/GreenDrop
+  - Core
+
+excluded:
+  - .build
+  - GreenDrop/GreenDropTests
+  - GreenDrop/GreenDropUITests
+
+# Rules
+disabled_rules:
+  - trailing_whitespace
+  - todo
+  - nesting
+
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+  - contains_over_first_not_nil
+  - discouraged_optional_boolean
+  - empty_string
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - modifier_order
+  - overridden_super_call
+  - private_action
+  - private_outlet
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - vertical_whitespace_closing_braces
+
+# Configuration
+line_length:
+  warning: 150
+  error: 200
+
+type_body_length:
+  warning: 500
+  error: 800
+
+file_length:
+  warning: 1000
+  error: 1500
+
+function_body_length:
+  warning: 60
+  error: 100
+
+function_parameter_count:
+  warning: 8
+  error: 12
+
+type_name:
+  min_length: 3
+  max_length: 50
+
+identifier_name:
+  min_length:
+    warning: 2
+  max_length:
+    warning: 50
+  excluded:
+    - id
+    - x
+    - y
+    - i
+    - db
+    - to
+
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+
+reporter: "xcode"

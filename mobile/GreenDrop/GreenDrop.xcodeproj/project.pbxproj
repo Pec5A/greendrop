@@ -1,0 +1,674 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D42F3A000100000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D52F3A000100000001 /* GoogleSignIn */; };
+		A1B2C3D62F3A000100000002 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D72F3A000100000002 /* GoogleSignInSwift */; };
+		A1B2C3D82F3A000200000003 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D92F3A000200000003 /* FirebaseCrashlytics */; };
+		F946DC672F1A965500F617BA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F946DC662F1A965500F617BA /* FirebaseAuth */; };
+		F946DC692F1A999F00F617BA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F946DC682F1A999F00F617BA /* GoogleService-Info.plist */; };
+		F946DC6A2F1B000000F617BA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F946DC6B2F1B000000F617BA /* FirebaseFirestore */; };
+		F946DC6C2F1B000100F617BA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F946DC6D2F1B000100F617BA /* FirebaseStorage */; };
+		F9C5992E2F2FE1A10095B337 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = F9C5992F2F2FE1A10095B337 /* StripePaymentSheet */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F9D1BF462F1A421400F58B60 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F9D1BF272F1A421100F58B60 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F9D1BF2E2F1A421100F58B60;
+			remoteInfo = GreenDrop;
+		};
+		F9D1BF502F1A421400F58B60 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F9D1BF272F1A421100F58B60 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F9D1BF2E2F1A421100F58B60;
+			remoteInfo = GreenDrop;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F946DC682F1A999F00F617BA /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F9D1BF2F2F1A421100F58B60 /* GreenDrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenDrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9D1BF452F1A421400F58B60 /* GreenDropTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenDropTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9D1BF4F2F1A421400F58B60 /* GreenDropUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenDropUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F9D1BF632F1A421400F58B60 /* Exceptions for "GreenDrop" folder in "GreenDrop" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F9D1BF2E2F1A421100F58B60 /* GreenDrop */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F9D1BF312F1A421100F58B60 /* GreenDrop */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F9D1BF632F1A421400F58B60 /* Exceptions for "GreenDrop" folder in "GreenDrop" target */,
+			);
+			path = GreenDrop;
+			sourceTree = "<group>";
+		};
+		F9D1BF482F1A421400F58B60 /* GreenDropTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GreenDropTests;
+			sourceTree = "<group>";
+		};
+		F9D1BF522F1A421400F58B60 /* GreenDropUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GreenDropUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F9D1BF2C2F1A421100F58B60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F946DC672F1A965500F617BA /* FirebaseAuth in Frameworks */,
+				F946DC6A2F1B000000F617BA /* FirebaseFirestore in Frameworks */,
+				F946DC6C2F1B000100F617BA /* FirebaseStorage in Frameworks */,
+				F9C5992E2F2FE1A10095B337 /* StripePaymentSheet in Frameworks */,
+				A1B2C3D42F3A000100000001 /* GoogleSignIn in Frameworks */,
+				A1B2C3D62F3A000100000002 /* GoogleSignInSwift in Frameworks */,
+				A1B2C3D82F3A000200000003 /* FirebaseCrashlytics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9D1BF422F1A421400F58B60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9D1BF4C2F1A421400F58B60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F9D1BF262F1A421100F58B60 = {
+			isa = PBXGroup;
+			children = (
+				F946DC682F1A999F00F617BA /* GoogleService-Info.plist */,
+				F9D1BF312F1A421100F58B60 /* GreenDrop */,
+				F9D1BF482F1A421400F58B60 /* GreenDropTests */,
+				F9D1BF522F1A421400F58B60 /* GreenDropUITests */,
+				F9D1BF302F1A421100F58B60 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F9D1BF302F1A421100F58B60 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F9D1BF2F2F1A421100F58B60 /* GreenDrop.app */,
+				F9D1BF452F1A421400F58B60 /* GreenDropTests.xctest */,
+				F9D1BF4F2F1A421400F58B60 /* GreenDropUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F9D1BF2E2F1A421100F58B60 /* GreenDrop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9D1BF582F1A421400F58B60 /* Build configuration list for PBXNativeTarget "GreenDrop" */;
+			buildPhases = (
+				F9D1BF2B2F1A421100F58B60 /* Sources */,
+				F9D1BF2C2F1A421100F58B60 /* Frameworks */,
+				F9D1BF2D2F1A421100F58B60 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F9D1BF312F1A421100F58B60 /* GreenDrop */,
+			);
+			name = GreenDrop;
+			packageProductDependencies = (
+				F946DC662F1A965500F617BA /* FirebaseAuth */,
+				F946DC6B2F1B000000F617BA /* FirebaseFirestore */,
+				F946DC6D2F1B000100F617BA /* FirebaseStorage */,
+				F9C5992F2F2FE1A10095B337 /* StripePaymentSheet */,
+				A1B2C3D52F3A000100000001 /* GoogleSignIn */,
+				A1B2C3D72F3A000100000002 /* GoogleSignInSwift */,
+				A1B2C3D92F3A000200000003 /* FirebaseCrashlytics */,
+			);
+			productName = GreenDrop;
+			productReference = F9D1BF2F2F1A421100F58B60 /* GreenDrop.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F9D1BF442F1A421400F58B60 /* GreenDropTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9D1BF5D2F1A421400F58B60 /* Build configuration list for PBXNativeTarget "GreenDropTests" */;
+			buildPhases = (
+				F9D1BF412F1A421400F58B60 /* Sources */,
+				F9D1BF422F1A421400F58B60 /* Frameworks */,
+				F9D1BF432F1A421400F58B60 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F9D1BF472F1A421400F58B60 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F9D1BF482F1A421400F58B60 /* GreenDropTests */,
+			);
+			name = GreenDropTests;
+			packageProductDependencies = (
+			);
+			productName = GreenDropTests;
+			productReference = F9D1BF452F1A421400F58B60 /* GreenDropTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F9D1BF4E2F1A421400F58B60 /* GreenDropUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9D1BF602F1A421400F58B60 /* Build configuration list for PBXNativeTarget "GreenDropUITests" */;
+			buildPhases = (
+				F9D1BF4B2F1A421400F58B60 /* Sources */,
+				F9D1BF4C2F1A421400F58B60 /* Frameworks */,
+				F9D1BF4D2F1A421400F58B60 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F9D1BF512F1A421400F58B60 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F9D1BF522F1A421400F58B60 /* GreenDropUITests */,
+			);
+			name = GreenDropUITests;
+			packageProductDependencies = (
+			);
+			productName = GreenDropUITests;
+			productReference = F9D1BF4F2F1A421400F58B60 /* GreenDropUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F9D1BF272F1A421100F58B60 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					F9D1BF2E2F1A421100F58B60 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					F9D1BF442F1A421400F58B60 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = F9D1BF2E2F1A421100F58B60;
+					};
+					F9D1BF4E2F1A421400F58B60 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = F9D1BF2E2F1A421100F58B60;
+					};
+				};
+			};
+			buildConfigurationList = F9D1BF2A2F1A421100F58B60 /* Build configuration list for PBXProject "GreenDrop" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F9D1BF262F1A421100F58B60;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F946DC652F1A965500F617BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F9C5992D2F2FE1A10095B337 /* XCRemoteSwiftPackageReference "stripe-ios" */,
+				A1B2C3DA2F3A000300000004 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F9D1BF302F1A421100F58B60 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F9D1BF2E2F1A421100F58B60 /* GreenDrop */,
+				F9D1BF442F1A421400F58B60 /* GreenDropTests */,
+				F9D1BF4E2F1A421400F58B60 /* GreenDropUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F9D1BF2D2F1A421100F58B60 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F946DC692F1A999F00F617BA /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9D1BF432F1A421400F58B60 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9D1BF4D2F1A421400F58B60 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F9D1BF2B2F1A421100F58B60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9D1BF412F1A421400F58B60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9D1BF4B2F1A421400F58B60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F9D1BF472F1A421400F58B60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F9D1BF2E2F1A421100F58B60 /* GreenDrop */;
+			targetProxy = F9D1BF462F1A421400F58B60 /* PBXContainerItemProxy */;
+		};
+		F9D1BF512F1A421400F58B60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F9D1BF2E2F1A421100F58B60 /* GreenDrop */;
+			targetProxy = F9D1BF502F1A421400F58B60 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F9D1BF592F1A421400F58B60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2W9AVP7P2J;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GreenDrop/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tonnom.greendrop-com.tonnom.greendrop";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F9D1BF5A2F1A421400F58B60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2W9AVP7P2J;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GreenDrop/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tonnom.greendrop-com.tonnom.greendrop";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F9D1BF5B2F1A421400F58B60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = N97BRBCRY4;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=*]" = com.greendrop.app;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F9D1BF5C2F1A421400F58B60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = N97BRBCRY4;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=*]" = com.greendrop.app;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F9D1BF5E2F1A421400F58B60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N97BRBCRY4;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Kz.GreenDropTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreenDrop.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GreenDrop";
+			};
+			name = Debug;
+		};
+		F9D1BF5F2F1A421400F58B60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N97BRBCRY4;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Kz.GreenDropTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreenDrop.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GreenDrop";
+			};
+			name = Release;
+		};
+		F9D1BF612F1A421400F58B60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N97BRBCRY4;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Kz.GreenDropUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GreenDrop;
+			};
+			name = Debug;
+		};
+		F9D1BF622F1A421400F58B60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N97BRBCRY4;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Kz.GreenDropUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GreenDrop;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F9D1BF2A2F1A421100F58B60 /* Build configuration list for PBXProject "GreenDrop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9D1BF5B2F1A421400F58B60 /* Debug */,
+				F9D1BF5C2F1A421400F58B60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F9D1BF582F1A421400F58B60 /* Build configuration list for PBXNativeTarget "GreenDrop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9D1BF592F1A421400F58B60 /* Debug */,
+				F9D1BF5A2F1A421400F58B60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F9D1BF5D2F1A421400F58B60 /* Build configuration list for PBXNativeTarget "GreenDropTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9D1BF5E2F1A421400F58B60 /* Debug */,
+				F9D1BF5F2F1A421400F58B60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F9D1BF602F1A421400F58B60 /* Build configuration list for PBXNativeTarget "GreenDropUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9D1BF612F1A421400F58B60 /* Debug */,
+				F9D1BF622F1A421400F58B60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1B2C3DA2F3A000300000004 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		F946DC652F1A965500F617BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
+		F9C5992D2F2FE1A10095B337 /* XCRemoteSwiftPackageReference "stripe-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 25.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1B2C3D52F3A000100000001 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1B2C3DA2F3A000300000004 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		A1B2C3D72F3A000100000002 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1B2C3DA2F3A000300000004 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		A1B2C3D92F3A000200000003 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F946DC652F1A965500F617BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		F946DC662F1A965500F617BA /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F946DC652F1A965500F617BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		F946DC6B2F1B000000F617BA /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F946DC652F1A965500F617BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		F946DC6D2F1B000100F617BA /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F946DC652F1A965500F617BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		F9C5992F2F2FE1A10095B337 /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F9C5992D2F2FE1A10095B337 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripePaymentSheet;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F9D1BF272F1A421100F58B60 /* Project object */;
+}
