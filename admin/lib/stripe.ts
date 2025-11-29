@@ -1,0 +1,22 @@
+import Stripe from "stripe"
+
+let _stripe: Stripe | null = null
+
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set in environment variables")
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16" as Stripe.LatestApiVersion,
+    })
+  }
+  return _stripe
+}
+
+// Backward-compatible export — throws at runtime, not at import time
+export const stripe = new Proxy({} as Stripe, {
+  get(_, prop) {
+    return Reflect.get(getStripe(), prop)
+  },
+})
