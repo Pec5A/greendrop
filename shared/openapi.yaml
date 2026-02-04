@@ -1,0 +1,1002 @@
+openapi: 3.0.3
+info:
+  title: PEC5A Mobile API
+  version: 1.0.0
+  description: |
+    API REST pour les applications mobiles de livraison (Client & Chauffeur).
+    
+    **Architecture:**
+    - Next.js API Routes hébergées sur Vercel
+    - Authentification Firebase Auth
+    - Base de données Firestore
+    
+    **Authentification:**
+    Toutes les requêtes nécessitent un token Firebase dans le header `Authorization: Bearer {token}`
+    
+  contact:
+    name: Support API
+    url: https://github.com/votre-repo/pec5a
+  license:
+    name: MIT
+
+servers:
+  - url: https://votre-projet.vercel.app/api
+    description: Production
+  - url: http://localhost:3000/api
+    description: Développement local
+
+tags:
+  - name: Orders
+    description: Gestion des commandes
+  - name: Shops
+    description: Boutiques et produits
+  - name: Drivers
+    description: Gestion des chauffeurs
+  - name: Upload
+    description: Upload de fichiers
+  - name: Notifications
+    description: Push notifications
+
+security:
+  - firebaseAuth: []
+
+paths:
+  /orders:
+    post:
+      tags:
+        - Orders
+      summary: Créer une commande
+      description: Crée une nouvelle commande pour le client connecté
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+            example:
+              shopId: shop_123
+              items:
+                - productId: prod_1
+                  quantity: 2
+                - productId: prod_2
+                  quantity: 1
+              deliveryAddress: "10 Rue de Rivoli, 75001 Paris"
+              deliveryLocation:
+                latitude: 48.8566
+                longitude: 2.3522
+              paymentMethod: card
+              notes: "Sonner à l'interphone"
+      responses:
+        '200':
+          description: Commande créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /orders/my:
+    get:
+      tags:
+        - Orders
+      summary: Récupérer mes commandes
+      description: Liste des commandes du client connecté
+      operationId: getMyOrders
+      parameters:
+        - name: status
+          in: query
+          description: Filtrer par statut
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - confirmed
+              - preparing
+              - ready
+              - delivering
+              - completed
+              - cancelled
+      responses:
+        '200':
+          description: Liste des commandes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrdersResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Détails d'une commande
+      description: Récupère les détails complets d'une commande
+      operationId: getOrderDetails
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '200':
+          description: Détails de la commande
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderDetailsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
+    patch:
+      tags:
+        - Orders
+      summary: Mettre à jour le statut d'une commande
+      description: |
+        Met à jour le statut d'une commande.
+        Permissions requises: Admin, Driver (assigné), ou Merchant (boutique associée)
+      operationId: updateOrderStatus
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
+            example:
+              status: delivering
+              driverId: driver_123
+      responses:
+        '200':
+          description: Commande mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /shops:
+    get:
+      tags:
+        - Shops
+      summary: Liste des boutiques
+      description: |
+        Récupère la liste des boutiques avec filtres optionnels.
+        Peut filtrer par localisation géographique, catégorie et recherche texte.
+      operationId: getShops
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude de l'utilisateur
+          required: false
+          schema:
+            type: number
+            format: float
+            example: 48.8566
+        - name: lng
+          in: query
+          description: Longitude de l'utilisateur
+          required: false
+          schema:
+            type: number
+            format: float
+            example: 2.3522
+        - name: radius
+          in: query
+          description: Rayon de recherche en km (défaut 10)
+          required: false
+          schema:
+            type: number
+            format: float
+            default: 10
+            example: 5
+        - name: category
+          in: query
+          description: Filtrer par catégorie
+          required: false
+          schema:
+            type: string
+            example: Bio
+        - name: search
+          in: query
+          description: Recherche texte (nom, description)
+          required: false
+          schema:
+            type: string
+            example: boulangerie
+      responses:
+        '200':
+          description: Liste des boutiques
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShopsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /shops/{id}/products:
+    get:
+      tags:
+        - Shops
+      summary: Produits d'une boutique
+      description: Récupère tous les produits disponibles d'une boutique
+      operationId: getShopProducts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la boutique
+          schema:
+            type: string
+            example: shop_123
+      responses:
+        '200':
+          description: Liste des produits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /drivers/location:
+    post:
+      tags:
+        - Drivers
+      summary: Mettre à jour la position GPS
+      description: |
+        Met à jour la position GPS du chauffeur connecté.
+        Permissions requises: Role Driver
+      operationId: updateDriverLocation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDriverLocationRequest'
+            example:
+              latitude: 48.8566
+              longitude: 2.3522
+              heading: 90
+              speed: 45
+      responses:
+        '200':
+          description: Position mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /drivers/status:
+    post:
+      tags:
+        - Drivers
+      summary: Mettre à jour le statut du chauffeur
+      description: |
+        Change le statut du chauffeur (disponible, occupé, hors ligne).
+        Permissions requises: Role Driver
+      operationId: updateDriverStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDriverStatusRequest'
+            example:
+              status: available
+      responses:
+        '200':
+          description: Statut mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateDriverStatusResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /upload:
+    post:
+      tags:
+        - Upload
+      summary: Upload un fichier
+      description: |
+        Upload un fichier en Base64 vers Firebase Storage.
+        Utilisé pour les photos de livraison, signatures, etc.
+      operationId: uploadFile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadFileRequest'
+            example:
+              base64Data: "/9j/4AAQSkZJRgABAQAAAQABAAD..."
+              mimeType: "image/jpeg"
+              orderId: "order_123"
+              fileType: "delivery_proof"
+      responses:
+        '200':
+          description: Fichier uploadé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadFileResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /notifications/send:
+    post:
+      tags:
+        - Notifications
+      summary: Envoyer une notification push
+      description: |
+        Envoie une notification push à un utilisateur via Firebase Cloud Messaging.
+        Permissions requises: Role Admin
+      operationId: sendNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequest'
+            example:
+              userId: user_123
+              title: "Commande livrée"
+              message: "Votre commande ORD-1737000000 a été livrée"
+              data:
+                orderId: order_123
+                type: delivery
+      responses:
+        '200':
+          description: Notification envoyée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendNotificationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /notifications/token:
+    put:
+      tags:
+        - Notifications
+      summary: Enregistrer un token FCM
+      description: |
+        Enregistre ou met à jour le token FCM d'un appareil pour recevoir les notifications push.
+      operationId: registerFCMToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterFCMTokenRequest'
+            example:
+              token: "dXABqK8TQ_2vQ6Z9..."
+              deviceId: "android-abc123"
+      responses:
+        '200':
+          description: Token enregistré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  securitySchemes:
+    firebaseAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Token d'authentification Firebase.
+        Obtenir le token: `await firebase.auth().currentUser.getIdToken()`
+
+  parameters:
+    OrderId:
+      name: id
+      in: path
+      required: true
+      description: ID de la commande
+      schema:
+        type: string
+        example: order_abc123
+
+  schemas:
+    # Requests
+    CreateOrderRequest:
+      type: object
+      required:
+        - shopId
+        - items
+        - deliveryAddress
+        - deliveryLocation
+      properties:
+        shopId:
+          type: string
+          description: ID de la boutique
+          example: shop_123
+        items:
+          type: array
+          description: Liste des produits commandés
+          minItems: 1
+          items:
+            type: object
+            required:
+              - productId
+              - quantity
+            properties:
+              productId:
+                type: string
+                example: prod_1
+              quantity:
+                type: integer
+                minimum: 1
+                example: 2
+        deliveryAddress:
+          type: string
+          description: Adresse de livraison complète
+          example: "10 Rue de Rivoli, 75001 Paris"
+        deliveryLocation:
+          type: object
+          required:
+            - latitude
+            - longitude
+          properties:
+            latitude:
+              type: number
+              format: float
+              example: 48.8566
+            longitude:
+              type: number
+              format: float
+              example: 2.3522
+        paymentMethod:
+          type: string
+          enum: [card, cash]
+          default: cash
+          example: card
+        notes:
+          type: string
+          description: Notes optionnelles
+          example: "Sonner à l'interphone"
+
+    UpdateOrderStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - pending
+            - confirmed
+            - preparing
+            - ready
+            - delivering
+            - completed
+            - cancelled
+          example: delivering
+        driverId:
+          type: string
+          description: ID du chauffeur (optionnel)
+          example: driver_123
+
+    UpdateDriverLocationRequest:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          format: float
+          example: 48.8566
+        longitude:
+          type: number
+          format: float
+          example: 2.3522
+        heading:
+          type: number
+          format: float
+          description: Direction en degrés (0-360)
+          minimum: 0
+          maximum: 360
+          example: 90
+        speed:
+          type: number
+          format: float
+          description: Vitesse en km/h
+          minimum: 0
+          example: 45
+
+    UpdateDriverStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [available, busy, offline]
+          example: available
+
+    UploadFileRequest:
+      type: object
+      required:
+        - base64Data
+        - mimeType
+      properties:
+        base64Data:
+          type: string
+          format: byte
+          description: Données du fichier encodées en Base64 (sans préfixe data:)
+          example: "/9j/4AAQSkZJRgABAQAAAQABAAD..."
+        mimeType:
+          type: string
+          description: Type MIME du fichier
+          example: "image/jpeg"
+          enum:
+            - image/jpeg
+            - image/png
+            - image/gif
+            - application/pdf
+        orderId:
+          type: string
+          description: ID de la commande (optionnel)
+          example: order_123
+        fileType:
+          type: string
+          description: Type de fichier (optionnel)
+          example: delivery_proof
+          enum:
+            - delivery_proof
+            - signature
+            - product_image
+            - document
+
+    SendNotificationRequest:
+      type: object
+      required:
+        - userId
+        - title
+        - message
+      properties:
+        userId:
+          type: string
+          description: ID de l'utilisateur destinataire
+          example: user_123
+        title:
+          type: string
+          description: Titre de la notification
+          example: "Commande livrée"
+        message:
+          type: string
+          description: Message de la notification
+          example: "Votre commande ORD-1737000000 a été livrée"
+        data:
+          type: object
+          description: Données supplémentaires (optionnel)
+          additionalProperties:
+            type: string
+          example:
+            orderId: order_123
+            type: delivery
+
+    RegisterFCMTokenRequest:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: Token FCM de l'appareil
+          example: "dXABqK8TQ_2vQ6Z9..."
+        deviceId:
+          type: string
+          description: ID unique de l'appareil (optionnel)
+          example: "android-abc123"
+
+    # Responses
+    CreateOrderResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        order:
+          $ref: '#/components/schemas/Order'
+
+    GetOrdersResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+
+    GetOrderDetailsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        order:
+          $ref: '#/components/schemas/Order'
+
+    GetShopsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        shops:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shop'
+
+    GetProductsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+
+    UpdateDriverStatusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Statut mis à jour"
+        status:
+          type: string
+          example: available
+
+    UploadFileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        url:
+          type: string
+          format: uri
+          description: URL publique du fichier uploadé
+          example: "https://storage.googleapis.com/pec5a.appspot.com/uploads/..."
+        fileName:
+          type: string
+          example: "uploads/user_123/file_1737000000"
+
+    SendNotificationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        successCount:
+          type: integer
+          description: Nombre de notifications envoyées avec succès
+          example: 1
+        failureCount:
+          type: integer
+          description: Nombre d'échecs
+          example: 0
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Opération réussie"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Le champ 'shopId' est requis"
+
+    # Models
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          example: order_abc123
+        reference:
+          type: string
+          example: ORD-1737000000
+        userId:
+          type: string
+          example: user_123
+        shopId:
+          type: string
+          example: shop_123
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+              quantity:
+                type: integer
+        total:
+          type: number
+          format: float
+          description: Montant total en euros
+          example: 15.5
+        deliveryFee:
+          type: number
+          format: float
+          example: 5.0
+        status:
+          type: string
+          enum:
+            - pending
+            - confirmed
+            - preparing
+            - ready
+            - delivering
+            - completed
+            - cancelled
+          example: pending
+        paymentMethod:
+          type: string
+          enum: [card, cash]
+          example: card
+        paymentStatus:
+          type: string
+          enum: [pending, paid, failed]
+          example: pending
+        deliveryAddress:
+          type: string
+          example: "10 Rue de Rivoli, 75001 Paris"
+        deliveryLocation:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+            longitude:
+              type: number
+              format: float
+        notes:
+          type: string
+        driverId:
+          type: string
+        deliveryPhoto:
+          type: string
+          format: uri
+        estimatedDeliveryTime:
+          type: string
+          format: date-time
+          example: "2026-01-15T14:30:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-15T14:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-01-15T14:05:00Z"
+
+    Shop:
+      type: object
+      properties:
+        id:
+          type: string
+          example: shop_123
+        name:
+          type: string
+          example: "Marché Bio de Paris"
+        address:
+          type: string
+          example: "45 Boulevard Saint-Germain, 75005 Paris"
+        category:
+          type: string
+          example: Bio
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 4.5
+        deliveryFee:
+          type: number
+          format: float
+          example: 5.0
+        minimumOrder:
+          type: number
+          format: float
+          example: 10.0
+        distance:
+          type: number
+          format: float
+          description: Distance en km (si lat/lng fournis)
+          example: 2.3
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+              example: 48.8566
+            longitude:
+              type: number
+              format: float
+              example: 2.3522
+        phone:
+          type: string
+          example: "+33 1 23 45 67 89"
+        email:
+          type: string
+          format: email
+          example: "contact@marche-bio.fr"
+        isOpen:
+          type: boolean
+          example: true
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          example: prod_123
+        shopId:
+          type: string
+          example: shop_123
+        name:
+          type: string
+          example: "Tomates Bio"
+        description:
+          type: string
+          example: "Tomates bio cultivées localement"
+        price:
+          type: number
+          format: float
+          example: 2.5
+        category:
+          type: string
+          example: Légumes
+        imageUrl:
+          type: string
+          format: uri
+          example: "https://storage.googleapis.com/..."
+        isAvailable:
+          type: boolean
+          example: true
+        stock:
+          type: integer
+          example: 50
+
+  responses:
+    BadRequest:
+      description: Requête invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Bad Request"
+            message: "Le champ 'shopId' est requis"
+
+    Unauthorized:
+      description: Non authentifié
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Unauthorized"
+            message: "Token d'authentification invalide ou manquant"
+
+    Forbidden:
+      description: Accès refusé
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Forbidden"
+            message: "Vous n'avez pas la permission d'effectuer cette action"
+
+    NotFound:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Not Found"
+            message: "Ressource introuvable"
+
+    InternalError:
+      description: Erreur serveur
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Internal Server Error"
+            message: "Une erreur est survenue"
