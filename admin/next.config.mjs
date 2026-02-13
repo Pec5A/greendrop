@@ -1,3 +1,5 @@
+import { withSentryConfig } from "@sentry/nextjs"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -65,8 +67,9 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://*.googleapis.com https://*.googleusercontent.com https://firebasestorage.googleapis.com https://*.stripe.com",
-              "connect-src 'self' https://*.firebase.google.com https://*.firebaseio.com https://*.googleapis.com https://api.stripe.com https://*.vercel-analytics.com wss://*.firebaseio.com",
+              "connect-src 'self' https://*.firebase.google.com https://*.firebaseio.com https://*.googleapis.com https://api.stripe.com https://*.vercel-analytics.com wss://*.firebaseio.com https://*.ingest.sentry.io",
               "frame-src 'self' https://*.stripe.com https://*.firebaseapp.com https://accounts.google.com",
+              "worker-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
@@ -78,4 +81,9 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+})

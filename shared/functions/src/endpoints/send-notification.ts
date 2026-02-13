@@ -7,6 +7,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https"
 import { getFirestore, FieldValue } from "firebase-admin/firestore"
 import { getMessaging } from "firebase-admin/messaging"
+import { Sentry } from "../sentry"
 
 interface SendNotificationRequest {
   userId: string
@@ -93,6 +94,7 @@ export const sendNotification = onCall(async (request) => {
       message: "Notification envoyée",
     }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur envoi notification:", error)
     throw new HttpsError("internal", error.message || "Erreur lors de l'envoi")
   }
@@ -134,6 +136,7 @@ export const registerFCMToken = onCall(async (request) => {
       message: "Token FCM enregistré",
     }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur enregistrement token:", error)
     throw new HttpsError("internal", "Erreur lors de l'enregistrement du token")
   }
