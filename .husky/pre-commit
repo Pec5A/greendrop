@@ -1,1 +1,1 @@
-npx lint-staged
+cd admin && npx lint-staged
