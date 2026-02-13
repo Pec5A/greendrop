@@ -11,7 +11,7 @@ struct APIConfig {
     ///
     /// - Note: In `DEBUG` mode, points to the local development server.
     ///   In release builds, points to the Vercel production deployment.
-    static let baseURL = "https://pec5a-kaysv2-hm7i.vercel.app/api"
+    static let baseURL = "https://greendrop-one.vercel.app/api"
 
     /// Default timeout interval for API requests, in seconds.
     static let timeout: TimeInterval = 30
