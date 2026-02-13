@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { adminAuth, adminDb } from "./firebase-admin"
 import { rateLimit } from "./rate-limit"
+import * as Sentry from "@sentry/nextjs"
 import crypto from "crypto"
 
 export interface AuthenticatedRequest extends NextRequest {
@@ -136,6 +137,7 @@ export function withAuth(
     try {
       return await handler(request, auth)
     } catch (error: any) {
+      Sentry.captureException(error)
       console.error("API error:", error)
       return NextResponse.json({ error: "Internal Server Error", message: error.message }, { status: 500 })
     }
@@ -146,6 +148,7 @@ export function withAuth(
  * Helper pour gérer les erreurs communes
  */
 export function handleApiError(error: any): NextResponse {
+  Sentry.captureException(error)
   console.error("API Error:", error)
 
   if (error.code === "permission-denied") {

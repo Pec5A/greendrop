@@ -6,6 +6,7 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https"
 import { getFirestore } from "firebase-admin/firestore"
+import { Sentry } from "../sentry"
 
 interface GetShopsRequest {
   userLocation?: {
@@ -76,6 +77,7 @@ export const getShops = onCall(async (request) => {
 
     return { success: true, shops }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur récupération boutiques:", error)
     throw new HttpsError("internal", "Erreur lors de la récupération des boutiques")
   }
@@ -106,6 +108,7 @@ export const getProducts = onCall(async (request) => {
 
     return { success: true, products }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur récupération produits:", error)
     throw new HttpsError("internal", "Erreur lors de la récupération des produits")
   }

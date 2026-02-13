@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { Sentry } from "../sentry";
 
 const db = admin.firestore();
 
@@ -25,62 +26,67 @@ export const onDriverLocationUpdate = functions.firestore
       return null;
     }
 
-    console.log(`Driver ${driverId} location updated:`, after.location);
+    try {
+      console.log(`Driver ${driverId} location updated:`, after.location);
 
-    // Get current order
-    const orderRef = db.collection("orders").doc(after.currentOrderId);
-    const orderSnap = await orderRef.get();
+      // Get current order
+      const orderRef = db.collection("orders").doc(after.currentOrderId);
+      const orderSnap = await orderRef.get();
 
-    if (!orderSnap.exists) {
-      console.error(`Order ${after.currentOrderId} not found for driver ${driverId}`);
-      return null;
-    }
+      if (!orderSnap.exists) {
+        console.error(`Order ${after.currentOrderId} not found for driver ${driverId}`);
+        return null;
+      }
 
-    const order = orderSnap.data();
-    if (!order) return null;
+      const order = orderSnap.data();
+      if (!order) return null;
 
-    // Update order with driver location
-    await orderRef.update({
-      driverLocation: after.location,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+      // Update order with driver location
+      await orderRef.update({
+        driverLocation: after.location,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
 
-    // Calculate distance to delivery address (simplified Haversine formula)
-    if (order.addresses && order.addresses.length > 0) {
-      const deliveryAddress = order.addresses[order.addresses.length - 1]; // Last address is delivery
-      
-      if (deliveryAddress.lat && deliveryAddress.lng) {
-        const distance = calculateDistance(
-          after.location.latitude,
-          after.location.longitude,
-          deliveryAddress.lat,
-          deliveryAddress.lng
-        );
+      // Calculate distance to delivery address (simplified Haversine formula)
+      if (order.addresses && order.addresses.length > 0) {
+        const deliveryAddress = order.addresses[order.addresses.length - 1]; // Last address is delivery
 
-        console.log(`Driver is ${distance}m from delivery address`);
+        if (deliveryAddress.lat && deliveryAddress.lng) {
+          const distance = calculateDistance(
+            after.location.latitude,
+            after.location.longitude,
+            deliveryAddress.lat,
+            deliveryAddress.lng
+          );
 
-        // If driver is within 500m, notify user
-        if (distance < 500 && !order.notifiedNearby) {
-          const notifRef = db.collection("notifications").doc();
-          await notifRef.set({
-            userId: order.userId,
-            title: "Driver Nearby",
-            message: `Your driver is approaching (${Math.round(distance)}m away)`,
-            type: "driver_nearby",
-            orderId: order.id,
-            isRead: false,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          });
+          console.log(`Driver is ${distance}m from delivery address`);
 
-          // Mark as notified to avoid spam
-          await orderRef.update({
-            notifiedNearby: true,
-          });
+          // If driver is within 500m, notify user
+          if (distance < 500 && !order.notifiedNearby) {
+            const notifRef = db.collection("notifications").doc();
+            await notifRef.set({
+              userId: order.userId,
+              title: "Driver Nearby",
+              message: `Your driver is approaching (${Math.round(distance)}m away)`,
+              type: "driver_nearby",
+              orderId: order.id,
+              isRead: false,
+              createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            // Mark as notified to avoid spam
+            await orderRef.update({
+              notifiedNearby: true,
+            });
+          }
         }
       }
-    }
 
-    return null;
+      return null;
+    } catch (error) {
+      Sentry.captureException(error);
+      throw error;
+    }
   });
 
 /**

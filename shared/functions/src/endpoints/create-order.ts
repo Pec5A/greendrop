@@ -6,6 +6,7 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https"
 import { getFirestore, FieldValue } from "firebase-admin/firestore"
+import { Sentry } from "../sentry"
 
 interface CreateOrderRequest {
   shopId: string
@@ -102,6 +103,7 @@ export const createOrder = onCall(async (request) => {
       message: "Commande créée avec succès",
     }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur création commande:", error)
     throw new HttpsError("internal", error.message || "Erreur lors de la création de la commande")
   }
