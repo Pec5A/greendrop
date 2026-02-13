@@ -7,6 +7,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https"
 import { getStorage } from "firebase-admin/storage"
 import { getFirestore, FieldValue } from "firebase-admin/firestore"
+import { Sentry } from "../sentry"
 
 interface UploadFileRequest {
   orderId?: string
@@ -84,6 +85,7 @@ export const uploadFile = onCall(async (request) => {
       message: "Fichier uploadé avec succès",
     }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur upload fichier:", error)
     throw new HttpsError("internal", error.message || "Erreur lors de l'upload")
   }

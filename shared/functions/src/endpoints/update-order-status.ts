@@ -6,6 +6,7 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https"
 import { getFirestore, FieldValue } from "firebase-admin/firestore"
+import { Sentry } from "../sentry"
 
 type OrderStatus = "created" | "paid" | "confirmed" | "preparing" | "ready" | "picked_up" | "in_transit" | "delivered" | "cancelled"
 
@@ -102,6 +103,7 @@ export const updateOrderStatus = onCall(async (request) => {
       message: "Statut mis à jour avec succès",
     }
   } catch (error: any) {
+    Sentry.captureException(error)
     console.error("Erreur mise à jour statut:", error)
     throw new HttpsError("internal", error.message || "Erreur lors de la mise à jour")
   }

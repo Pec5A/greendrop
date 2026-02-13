@@ -1,6 +1,8 @@
 import * as admin from "firebase-admin";
+import { initSentry } from "./sentry";
 
 admin.initializeApp();
+initSentry();
 
 // ========================================
 // ENDPOINTS API (Callable Functions)
