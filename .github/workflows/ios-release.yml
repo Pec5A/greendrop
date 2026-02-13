@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 45
     defaults:
       run:
-        working-directory: ios/GreenDrop
+        working-directory: mobile/GreenDrop
 
     steps:
       - name: Checkout code
@@ -70,7 +70,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .swiftpm
-          key: ${{ runner.os }}-spm-${{ hashFiles('ios/GreenDrop/GreenDrop.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('mobile/GreenDrop/GreenDrop.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
@@ -167,7 +167,7 @@ jobs:
             Chaque testeur doit :
             1. Avoir un Mac avec Xcode 15+
             2. Cloner le repo : `git clone ${{ github.server_url }}/${{ github.repository }}.git`
-            3. Ouvrir `ios/GreenDrop/GreenDrop.xcodeproj`
+            3. Ouvrir `mobile/GreenDrop/GreenDrop.xcodeproj`
             4. Signing & Capabilities > changer le Team par son Apple ID personnel
             5. Brancher son iPhone en USB, le selectionner et lancer (Cmd+R)
             6. Sur iPhone : Reglages > General > Gestion des appareils > Faire confiance
