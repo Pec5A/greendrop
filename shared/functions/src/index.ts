@@ -31,3 +31,10 @@ export { sendNotification, registerFCMToken } from "./endpoints/send-notificatio
 export { onOrderStatusChange } from "./triggers/order-status-change";
 export { onDriverLocationUpdate } from "./triggers/driver-location-update";
 export { onOrderCreated } from "./triggers/order-created";
+export { onUserWriteSyncDriver } from "./triggers/sync-driver";
+
+// ========================================
+// SCHEDULED (Métriques & Monitoring)
+// ========================================
+
+export { pushMetrics } from "./triggers/push-metrics";
