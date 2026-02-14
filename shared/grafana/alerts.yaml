@@ -1,0 +1,143 @@
+# ─────────────────────────────────────────────────────
+# GreenDrop — Grafana Alert Rules
+# ─────────────────────────────────────────────────────
+# Import these rules in Grafana Cloud → Alerting → Alert rules
+#
+# Contact point: Discord webhook
+#   → Grafana Cloud → Alerting → Contact points → New
+#   → Type: Discord
+#   → Webhook URL: https://discord.com/api/webhooks/<your-webhook-id>/<your-webhook-token>
+# ─────────────────────────────────────────────────────
+
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: GreenDrop — Business Alerts
+    folder: GreenDrop
+    interval: 5m
+    rules:
+      # ── Taux de livraison bas ──────────────────────
+      - uid: greendrop-delivery-rate
+        title: "Taux de livraison à temps < 80%"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.orders.on_time_rate
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [80]
+        for: 15m
+        labels:
+          severity: warning
+          team: operations
+        annotations:
+          summary: "Le taux de livraison à temps est passé sous 80%"
+          description: "Valeur actuelle: {{ $values.A }}%. Seuil: 80%. Vérifiez les chauffeurs et les retards."
+
+      # ── Trop de disputes ouvertes ──────────────────
+      - uid: greendrop-disputes-high
+        title: "Disputes ouvertes > 10"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.disputes.open
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [10]
+        for: 10m
+        labels:
+          severity: critical
+          team: support
+        annotations:
+          summary: "Plus de 10 disputes ouvertes nécessitent une attention immédiate"
+          description: "{{ $values.A }} disputes ouvertes. Assignez des modérateurs."
+
+      # ── Vérifications KYC en attente ───────────────
+      - uid: greendrop-verifications-backlog
+        title: "Vérifications KYC en attente > 20"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.verifications.pending
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [20]
+        for: 30m
+        labels:
+          severity: warning
+          team: compliance
+        annotations:
+          summary: "File d'attente KYC > 20 vérifications"
+          description: "{{ $values.A }} vérifications en attente depuis 30 min. Priorisez le traitement."
+
+      # ── Aucun chauffeur en ligne ───────────────────
+      - uid: greendrop-no-drivers
+        title: "Aucun chauffeur en ligne"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.drivers.online
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+        for: 10m
+        labels:
+          severity: critical
+          team: operations
+        annotations:
+          summary: "Aucun chauffeur connecté sur la plateforme"
+          description: "0 chauffeurs en ligne depuis 10 min. Les commandes ne peuvent pas être livrées."
+
+      # ── Baisse de revenu journalier ────────────────
+      - uid: greendrop-revenue-drop
+        title: "Revenu journalier = 0€ après 12h"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.orders.revenue.today
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+        for: 1h
+        labels:
+          severity: warning
+          team: business
+        annotations:
+          summary: "Aucun revenu enregistré aujourd'hui"
+          description: "Revenu du jour: {{ $values.A }}€. Vérifiez que le système de paiement fonctionne."
