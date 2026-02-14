@@ -963,7 +963,7 @@ export function CreateDriverModal({ isOpen, onClose, onSuccess }: CreateDriverMo
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+212 6XX XXX XXX"
+                placeholder="+33 6 12 34 56 78"
                 disabled={isLoading}
               />
             </div>
@@ -995,7 +995,7 @@ export function CreateDriverModal({ isOpen, onClose, onSuccess }: CreateDriverMo
                 id="vehiclePlate"
                 value={formData.vehiclePlate}
                 onChange={(e) => setFormData({ ...formData, vehiclePlate: e.target.value })}
-                placeholder={t("language") === "fr" ? "ex: 12345-أ-67" : "e.g. 12345-A-67"}
+                placeholder={t("language") === "fr" ? "ex: AB-123-CD" : "e.g. AB-123-CD"}
                 disabled={isLoading}
               />
             </div>

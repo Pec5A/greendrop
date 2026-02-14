@@ -222,6 +222,11 @@ function MapMarker({
 }: MapMarkerProps) {
   const { map } = useMap()
 
+  const hasValidCoords = Number.isFinite(longitude) && Number.isFinite(latitude)
+  if (!hasValidCoords) {
+    return null
+  }
+
   const marker = useMemo(() => {
     const markerInstance = new MapLibreGL.Marker({
       ...markerOptions,
