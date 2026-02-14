@@ -186,7 +186,9 @@ function ZoneEditor({ initialZones = [], onSave }: { initialZones: Zone[], onSav
 
   const finishZone = () => {
     if (currentZone && currentZone.coordinates.length >= 3) {
-      setZones(prev => [...prev, currentZone])
+      const updatedZones = [...zones, currentZone]
+      setZones(updatedZones)
+      if (onSave) onSave(updatedZones)
     }
     setCurrentZone(null)
     setIsDrawing(false)
@@ -198,7 +200,9 @@ function ZoneEditor({ initialZones = [], onSave }: { initialZones: Zone[], onSav
   }
 
   const deleteZone = (zoneId: string) => {
-    setZones(prev => prev.filter(z => z.id !== zoneId))
+    const updatedZones = zones.filter(z => z.id !== zoneId)
+    setZones(updatedZones)
+    if (onSave) onSave(updatedZones)
   }
 
   const startEditZone = (zone: Zone) => {
@@ -208,9 +212,9 @@ function ZoneEditor({ initialZones = [], onSave }: { initialZones: Zone[], onSav
 
   const saveEditZone = () => {
     if (editingZone) {
-      setZones(prev =>
-        prev.map(z => (z.id === editingZone.id ? { ...z, name: editName } : z))
-      )
+      const updatedZones = zones.map(z => (z.id === editingZone.id ? { ...z, name: editName } : z))
+      setZones(updatedZones)
+      if (onSave) onSave(updatedZones)
       setEditingZone(null)
       setEditName("")
     }
