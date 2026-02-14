@@ -309,7 +309,7 @@ export default function DriversPage() {
                           <div className="mt-3 grid gap-3 text-xs text-muted-foreground md:grid-cols-3">
                             <div className="flex items-center gap-2">
                               <MapPin className="h-3.5 w-3.5" />
-                              {driver.location
+                              {driver.location && Number.isFinite(driver.location.lat) && Number.isFinite(driver.location.lng)
                                 ? `${driver.location.lat.toFixed(3)}, ${driver.location.lng.toFixed(3)}`
                                 : isFrench
                                   ? "Position inconnue"
