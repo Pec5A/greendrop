@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { Verification } from "@/lib/types"
 import {
   subscribeToVerifications,
@@ -16,6 +16,8 @@ import {
   logVerificationRejected,
 } from "@/lib/firebase/services/activity-logs"
 import { useAuth } from "@/lib/firebase/auth-context"
+import { getDownloadURL, ref as storageRef } from "firebase/storage"
+import { storage } from "@/lib/firebase/config"
 
 export function useVerifications() {
   const [verifications, setVerifications] = useState<Verification[]>([])
@@ -28,20 +30,70 @@ export function useVerifications() {
     rejected: 0,
   })
   const { user } = useAuth()
+  const urlCacheRef = useRef<Map<string, string>>(new Map())
+
+  const resolveStorageUrl = async (url: string): Promise<string> => {
+    if (!url.startsWith("gs://")) return url
+
+    const cached = urlCacheRef.current.get(url)
+    if (cached) return cached
+
+    const downloadUrl = await getDownloadURL(storageRef(storage, url))
+    urlCacheRef.current.set(url, downloadUrl)
+    return downloadUrl
+  }
+
+  const resolveVerificationMedia = async (items: Verification[]): Promise<Verification[]> => {
+    return Promise.all(
+      items.map(async (item) => {
+        const documentUrl = item.documentUrl
+          ? await resolveStorageUrl(item.documentUrl)
+          : item.documentUrl
+
+        const attachments = item.attachments
+          ? await Promise.all(
+              item.attachments.map(async (att) => ({
+                ...att,
+                url: await resolveStorageUrl(att.url),
+              }))
+            )
+          : item.attachments
+
+        return { ...item, documentUrl, attachments }
+      })
+    )
+  }
 
   useEffect(() => {
+    let active = true
+
     const unsubscribe = subscribeToVerifications(
-      (data) => {
-        setVerifications(data)
-        setLoading(false)
+      async (data) => {
+        try {
+          const resolved = await resolveVerificationMedia(data)
+          if (active) {
+            setVerifications(resolved)
+            setLoading(false)
+          }
+        } catch {
+          if (active) {
+            setVerifications(data)
+            setLoading(false)
+          }
+        }
       },
       (err) => {
-        setError(err)
-        setLoading(false)
+        if (active) {
+          setError(err)
+          setLoading(false)
+        }
       }
     )
 
-    return () => unsubscribe()
+    return () => {
+      active = false
+      unsubscribe()
+    }
   }, [])
 
   // Update stats when verifications change
@@ -78,7 +130,7 @@ export function useVerifications() {
     try {
       const reviewerEmail = user?.email || "admin@greendrop.com"
       await approveVerificationService(id, reviewerEmail)
-      
+
       const verification = verifications.find((v) => v.id === id)
       if (verification) {
         await logVerificationApproved(id, verification.userId, reviewerEmail)
@@ -92,7 +144,7 @@ export function useVerifications() {
     try {
       const reviewerEmail = user?.email || "admin@greendrop.com"
       await rejectVerificationService(id, reviewerEmail, reason)
-      
+
       const verification = verifications.find((v) => v.id === id)
       if (verification) {
         await logVerificationRejected(id, verification.userId, reviewerEmail, reason)

@@ -209,27 +209,28 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
       </Card>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-4xl space-y-6">
+        <DialogContent className="max-w-6xl w-full max-h-[85vh] overflow-y-auto space-y-6">
           <DialogHeader>
-            <DialogTitle>Review Verification</DialogTitle>
+            <DialogTitle className="text-xl">Review Verification</DialogTitle>
             <DialogDescription>
               {typeLabels[verification.type]} • {userName} ({userEmail})
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-6 lg:grid-cols-5">
-            <div className="space-y-4 lg:col-span-3">
+          <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+            <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Paperclip className="h-4 w-4" /> Attachments
+                <Badge variant="secondary" className="text-xs">{attachments.length} files</Badge>
               </div>
               {attachments.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   {attachments.map((attachment) => {
                     const visual = isImageAttachment(attachment.url, attachment.mimeType)
                     return (
-                      <div key={attachment.id} className="rounded-lg border border-border/60 p-3">
+                      <div key={attachment.id} className="rounded-xl border border-border/60 p-3 bg-card shadow-sm">
                         <div className="flex items-center justify-between text-sm font-medium">
-                          <span>{attachment.label}</span>
+                          <span className="truncate">{attachment.label}</span>
                           <Button variant="ghost" size="sm" asChild>
                             <a href={attachment.url} target="_blank" rel="noopener noreferrer">
                               <Download className="mr-1 h-4 w-4" />
@@ -242,7 +243,7 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
                             <StorageImage
                               src={attachment.url}
                               alt={attachment.label}
-                              className="h-52 w-full object-cover"
+                              className="h-40 sm:h-56 w-full object-cover"
                             />
                           </div>
                         ) : (
@@ -265,13 +266,13 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
               )}
             </div>
 
-            <div className="space-y-4 lg:col-span-2">
-              <div className="rounded-lg border border-border/70 p-4 text-sm">
+            <div className="space-y-4">
+              <div className="rounded-xl border border-border/70 p-4 bg-card shadow-sm text-sm">
                 <div className="text-sm font-semibold">Verification Metadata</div>
                 <Separator className="my-3" />
-                <dl className="space-y-2">
+                <dl className="grid gap-2 text-xs">
                   {verification.firstName && (
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">Name</dt>
                       <dd className="font-medium">
                         {verification.firstName} {verification.lastName}
@@ -279,13 +280,13 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
                     </div>
                   )}
                   {verification.dateOfBirth && (
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">Date of Birth</dt>
                       <dd className="font-medium">{new Date(verification.dateOfBirth).toLocaleDateString()}</dd>
                     </div>
                   )}
                   {verification.documentType && (
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">Document Type</dt>
                       <dd className="font-medium">
                         {documentTypeLabels[verification.documentType] || verification.documentType}
@@ -293,24 +294,24 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
                     </div>
                   )}
                   {verification.documentNumber && (
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">Document N°</dt>
                       <dd className="font-medium">{verification.documentNumber}</dd>
                     </div>
                   )}
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Submitted</dt>
                     <dd className="font-medium">{formatDateTime(verification.submittedAt)}</dd>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Status</dt>
                     <dd className="font-semibold capitalize">{verification.status}</dd>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Reviewed By</dt>
                     <dd className="font-medium">{verification.reviewedBy || "—"}</dd>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Reviewed At</dt>
                     <dd className="font-medium">{formatDateTime(verification.reviewedAt)}</dd>
                   </div>
@@ -322,7 +323,7 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
                 )}
               </div>
 
-              <div className="rounded-lg border border-border/70 p-4">
+              <div className="rounded-xl border border-border/70 p-4 bg-card shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-semibold">
                   <Clock className="h-4 w-4" /> Review History
                 </div>
@@ -350,7 +351,7 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
           </div>
 
           {verification.status === "pending" ? (
-            <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="flex flex-col gap-2 md:flex-col xl:flex-row">
               <Button onClick={handleApprove} className="flex-1" disabled={isApproving || isRejecting}>
                 <CheckCircle className="mr-2 h-4 w-4" /> Approve
               </Button>
