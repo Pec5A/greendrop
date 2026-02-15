@@ -9,8 +9,6 @@ import {
 } from "react"
 import {
   signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
@@ -18,7 +16,7 @@ import {
   sendEmailVerification,
   type User as FirebaseUser,
 } from "firebase/auth"
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore"
+import { doc, getDoc } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase/config"
 import { COLLECTIONS } from "@/lib/firebase/collections"
 import { logLogin, logLogout } from "@/lib/firebase/services/activity-logs"
@@ -30,15 +28,12 @@ interface AuthContextType {
   loading: boolean
   error: string | null
   signIn: (email: string, password: string) => Promise<void>
-  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   confirmReset: (oobCode: string, newPassword: string) => Promise<void>
   sendVerificationEmail: () => Promise<void>
   clearError: () => void
 }
-
-const googleProvider = new GoogleAuthProvider()
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -74,45 +69,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Create user profile if doesn't exist
-  const createUserProfile = async (firebaseUser: FirebaseUser): Promise<User> => {
-    const userProfile: Omit<User, "id"> = {
-      email: firebaseUser.email || "",
-      name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
-      role: "admin", // Default role for admin panel
-      status: "verified",
-      createdAt: new Date().toISOString(),
-    }
-
-    const docRef = doc(db, COLLECTIONS.USERS, firebaseUser.uid)
-    await setDoc(docRef, {
-      ...userProfile,
-      createdAt: serverTimestamp(),
-    })
-
-    return {
-      id: firebaseUser.uid,
-      ...userProfile,
-    }
-  }
-
   // Listen to auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser)
-      
+
       if (firebaseUser) {
-        let profile = await fetchUserProfile(firebaseUser.uid)
-        
+        const profile = await fetchUserProfile(firebaseUser.uid)
+
         if (!profile) {
-          profile = await createUserProfile(firebaseUser)
+          // No Firestore profile = unauthorized, sign out
+          await firebaseSignOut(auth)
+          setUser(null)
+          setUserProfile(null)
+          setError("Compte non autorisé. Contactez un administrateur.")
+          setLoading(false)
+          return
         }
-        
+
         setUserProfile(profile)
       } else {
         setUserProfile(null)
       }
-      
+
       setLoading(false)
     })
 
@@ -140,41 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (err: any) {
       const errorMessage = getAuthErrorMessage(err.code)
-      setError(errorMessage)
-      throw new Error(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Sign in with Google OAuth
-  const signInWithGoogleHandler = async () => {
-    try {
-      setError(null)
-      setLoading(true)
-
-      const userCredential = await signInWithPopup(auth, googleProvider)
-      let profile = await fetchUserProfile(userCredential.user.uid)
-
-      if (!profile) {
-        profile = await createUserProfile(userCredential.user)
-      }
-
-      // Check if user has admin or merchant role (allowed for web panel)
-      if (profile && !['admin', 'merchant'].includes(profile.role)) {
-        await firebaseSignOut(auth)
-        throw new Error("Accès non autorisé. Seuls les administrateurs et marchands peuvent se connecter au panneau web.")
-      }
-
-      if (userCredential.user) {
-        await logLogin(userCredential.user.uid, userCredential.user.email || "")
-      }
-    } catch (err: any) {
-      if (err.code === "auth/popup-closed-by-user") {
-        setLoading(false)
-        return
-      }
-      const errorMessage = err.code ? getAuthErrorMessage(err.code) : err.message
       setError(errorMessage)
       throw new Error(errorMessage)
     } finally {
@@ -245,7 +189,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         error,
         signIn,
-        signInWithGoogle: signInWithGoogleHandler,
         signOut,
         resetPassword,
         confirmReset,

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenDrop — Préparation Soutenance Équipe</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    :root {
+      --green: #22c55e; --green-dark: #16a34a; --green-light: #dcfce7;
+      --blue: #3b82f6; --blue-light: #dbeafe;
+      --orange: #f97316; --orange-light: #ffedd5;
+      --red: #ef4444; --red-light: #fee2e2;
+      --purple: #8b5cf6; --purple-light: #ede9fe;
+      --cyan: #06b6d4; --cyan-light: #cffafe;
+      --pink: #ec4899; --pink-light: #fce7f3;
+      --g50: #f9fafb; --g100: #f3f4f6; --g200: #e5e7eb; --g300: #d1d5db;
+      --g500: #6b7280; --g700: #374151; --g800: #1f2937; --g900: #111827;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: var(--g800); line-height: 1.7; background: #fff; font-size: 14px; }
+    @media print {
+      body { font-size: 11px; line-height: 1.5; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none; }
+      details { open; }
+      details[open] summary { margin-bottom: 8px; }
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 30px; }
+    /* Cover */
+    .cover { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #065f46 0%, #059669 50%, #34d399 100%); color: #fff; text-align: center; }
+    .cover h1 { font-size: 44px; font-weight: 800; margin-bottom: 8px; }
+    .cover .sub { font-size: 20px; font-weight: 300; opacity: .85; margin-bottom: 24px; }
+    .cover .meta { font-size: 14px; opacity: .7; line-height: 2; }
+    .cover .logo { width: 90px; height: 90px; background: rgba(255,255,255,.2); border-radius: 22px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; font-size: 44px; }
+    .cover .team-names { margin-top: 20px; font-size: 16px; font-weight: 500; opacity: .9; line-height: 2; }
+    /* Section */
+    section { padding: 30px 0; border-top: 2px solid var(--g100); }
+    h2 { font-size: 22px; font-weight: 700; color: var(--green-dark); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    h2 .icon { font-size: 24px; }
+    h3 { font-size: 16px; font-weight: 600; margin: 20px 0 10px; color: var(--g900); }
+    h4 { font-size: 14px; font-weight: 600; margin: 12px 0 6px; color: var(--g700); }
+    p { margin-bottom: 10px; }
+    ul, ol { margin: 8px 0 12px 20px; }
+    li { margin-bottom: 4px; }
+    /* Timer bar */
+    .timer { display: flex; gap: 4px; margin: 16px 0; align-items: stretch; border-radius: 10px; overflow: hidden; }
+    .timer-block { padding: 10px 12px; color: #fff; font-size: 11px; font-weight: 600; display: flex; flex-direction: column; justify-content: center; }
+    .timer-block .dur { font-size: 16px; font-weight: 800; }
+    .timer-block .label { opacity: .85; font-size: 10px; }
+    .timer-block .speaker { opacity: .7; font-size: 9px; margin-top: 2px; }
+    /* Cards */
+    .tip { padding: 14px 16px; border-radius: 10px; margin: 12px 0; font-size: 13px; }
+    .tip.green { background: var(--green-light); border-left: 4px solid var(--green); }
+    .tip.blue { background: var(--blue-light); border-left: 4px solid var(--blue); }
+    .tip.orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+    .tip.red { background: var(--red-light); border-left: 4px solid var(--red); }
+    .tip.purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+    .tip.pink { background: var(--pink-light); border-left: 4px solid var(--pink); }
+    .tip.cyan { background: var(--cyan-light); border-left: 4px solid var(--cyan); }
+    .tip strong { display: block; margin-bottom: 4px; }
+    /* Member card */
+    .member-card { padding: 16px; border-radius: 12px; margin: 12px 0; border: 2px solid var(--g200); }
+    .member-card.yassir { border-color: var(--green); background: linear-gradient(135deg, var(--green-light), #fff); }
+    .member-card.samy { border-color: var(--blue); background: linear-gradient(135deg, var(--blue-light), #fff); }
+    .member-card.kays { border-color: var(--purple); background: linear-gradient(135deg, var(--purple-light), #fff); }
+    .member-card .name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+    .member-card .role { font-size: 12px; color: var(--g500); margin-bottom: 8px; }
+    .member-card ul { font-size: 13px; }
+    /* Q&A */
+    .qa { margin: 12px 0; }
+    details { margin: 8px 0; border: 1px solid var(--g200); border-radius: 10px; overflow: hidden; }
+    summary { padding: 12px 16px; font-weight: 600; font-size: 13px; cursor: pointer; background: var(--g50); display: flex; align-items: center; gap: 8px; }
+    summary:hover { background: var(--g100); }
+    summary::before { content: ""; font-size: 14px; }
+    .answer { padding: 12px 16px; font-size: 13px; border-top: 1px solid var(--g200); background: #fff; }
+    .answer strong { color: var(--green-dark); }
+    .answer code { font-size: 11px; background: var(--g100); padding: 1px 5px; border-radius: 3px; }
+    /* Script block */
+    .script { background: var(--g900); color: #e5e7eb; padding: 16px; border-radius: 10px; margin: 12px 0; font-size: 12px; line-height: 1.8; white-space: pre-wrap; }
+    .script .highlight { color: #34d399; font-weight: 600; }
+    .script .note { color: #fbbf24; font-style: italic; }
+    .script .speaker-tag { color: #f472b6; font-weight: 700; }
+    /* Badge */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+    .badge.green { background: var(--green-light); color: var(--green-dark); }
+    .badge.blue { background: var(--blue-light); color: #1d4ed8; }
+    .badge.orange { background: var(--orange-light); color: #c2410c; }
+    .badge.red { background: var(--red-light); color: #dc2626; }
+    .badge.purple { background: var(--purple-light); color: #7c3aed; }
+    /* Table */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+    th { background: var(--g100); font-weight: 600; text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--g300); }
+    td { padding: 7px 10px; border-bottom: 1px solid var(--g200); }
+    /* Checklist */
+    .checklist { list-style: none; margin-left: 0; }
+    .checklist li { padding: 6px 0; display: flex; align-items: flex-start; gap: 8px; }
+    .checklist li::before { content: "☐"; font-size: 16px; color: var(--green); flex-shrink: 0; }
+    /* Section divider */
+    .part-header { background: var(--g900); color: #fff; padding: 20px 24px; border-radius: 12px; margin: 24px 0 16px; }
+    .part-header h2 { color: #fff; margin: 0; }
+    .part-header .part-meta { font-size: 13px; color: var(--g300); margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ========== COVER ========== -->
+<div class="cover">
+  <div>
+    <div class="logo">🌿</div>
+    <h1>Soutenance GreenDrop</h1>
+    <div class="sub">Guide de Préparation — Équipe de 3</div>
+    <div class="meta">
+      Projet RNCP — Février 2026<br>
+      Plateforme de livraison CBD<br>
+      iOS + Admin Web + Cloud Functions + Firebase
+    </div>
+    <div class="team-names">
+      Yassir Sabbar &bull; Samy Zerouali &bull; Kays Zahidi<br>
+      <span style="font-size:13px; opacity:.7;">École Decode, Paris &mdash; Organisation GitHub : Pec5A</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== EQUIPE & REPARTITION ========== -->
+<div class="page-break"></div>
+<div class="container">
+
+<section>
+  <h2><span class="icon">👥</span> Équipe &amp; Répartition des Rôles</h2>
+
+  <div class="member-card yassir">
+    <div class="name">🟢 Yassir Sabbar</div>
+    <div class="role">Admin Web + Backend + DevOps</div>
+    <ul>
+      <li><strong>Panel d'administration</strong> — Next.js 16 / React 19 / Tailwind CSS / shadcn/ui</li>
+      <li><strong>Cloud Functions</strong> — 16 fonctions Firebase (endpoints + triggers)</li>
+      <li><strong>CI/CD</strong> — GitHub Actions (7 jobs), Husky pre-commit</li>
+      <li><strong>Monitoring</strong> — Sentry + Grafana Cloud</li>
+      <li><strong>Base de données</strong> — Modélisation Firestore (15 collections) + Security Rules</li>
+      <li><strong>API REST</strong> — 20+ routes Next.js API avec middleware RBAC + CSRF</li>
+    </ul>
+  </div>
+
+  <div class="member-card samy">
+    <div class="name">🔵 Samy Zerouali</div>
+    <div class="role">Mobile iOS — Client &amp; Livreur</div>
+    <ul>
+      <li><strong>Application iOS</strong> — Swift / SwiftUI natif (18 600 lignes)</li>
+      <li><strong>Client</strong> — Catalogue, panier, commande, suivi GPS, avis, codes promo</li>
+      <li><strong>Livreur</strong> — Dashboard, livraisons, navigation GPS, preuve de livraison (photo)</li>
+      <li><strong>Temps réel</strong> — Firestore listeners + CoreLocation (position toutes les 10s)</li>
+      <li><strong>Chat</strong> — Messagerie temps réel client/livreur par commande</li>
+      <li><strong>Architecture</strong> — MVVM réactif avec @Published + @EnvironmentObject</li>
+    </ul>
+  </div>
+
+  <div class="member-card kays">
+    <div class="name">🟣 Kays Zahidi</div>
+    <div class="role">Mobile iOS — Marchand + Paiements + KYC</div>
+    <ul>
+      <li><strong>Marchand</strong> — Dashboard, gestion produits CRUD, suivi commandes</li>
+      <li><strong>Paiements</strong> — Stripe PaymentSheet + Stripe Connect (onboarding marchand &amp; livreur)</li>
+      <li><strong>KYC</strong> — Vérification d'identité (upload documents, workflow d'approbation)</li>
+      <li><strong>Pourboires</strong> — Système de pourboire pour les livreurs</li>
+      <li><strong>Carte</strong> — Intégration MapKit pour la navigation et le suivi</li>
+      <li><strong>Authentification mobile</strong> — Firebase Auth (email/password + Google OAuth)</li>
+    </ul>
+  </div>
+
+  <div class="tip orange">
+    <strong>Adaptez la répartition !</strong>
+    Cette répartition est une suggestion basée sur la structure du projet. Ajustez les rôles selon la réalité de votre travail d'équipe. L'important est que chaque membre sache précisément ce qu'il a fait et puisse le défendre.
+  </div>
+</section>
+
+<!-- ========================================================== -->
+<!--           PARTIE COLLECTIVE — 10 MINUTES                   -->
+<!-- ========================================================== -->
+
+<div class="part-header">
+  <h2><span class="icon">🎤</span> Partie Collective — 10 minutes</h2>
+  <div class="part-meta">Présentation en équipe. Vous parlez à tour de rôle.</div>
+</div>
+
+<section>
+  <h2><span class="icon">🗓️</span> Plan Collectif — 10 minutes</h2>
+
+  <div class="timer">
+    <div class="timer-block" style="background:#065f46; flex:2;"><div class="dur">2 min</div><div class="label">Introduction</div><div class="speaker">Yassir</div></div>
+    <div class="timer-block" style="background:#16a34a; flex:2;"><div class="dur">2 min</div><div class="label">Architecture</div><div class="speaker">Yassir</div></div>
+    <div class="timer-block" style="background:#3b82f6; flex:2;"><div class="dur">2 min</div><div class="label">Mobile</div><div class="speaker">Samy</div></div>
+    <div class="timer-block" style="background:#8b5cf6; flex:2;"><div class="dur">2 min</div><div class="label">Paiements</div><div class="speaker">Kays</div></div>
+    <div class="timer-block" style="background:#ef4444; flex:2;"><div class="dur">2 min</div><div class="label">Démo live</div><div class="speaker">Tous</div></div>
+  </div>
+
+  <div class="tip green">
+    <strong>Conseil collectif</strong>
+    Racontez une histoire ensemble : "Un client ouvre l'app → commande → paiement → le marchand prépare → le chauffeur livre → tout est tracé dans l'admin." Chacun intervient sur sa partie du flux.
+  </div>
+</section>
+
+<!-- COLLECTIF 1 : INTRO -->
+<section>
+  <h2><span class="icon">1️⃣</span> Introduction &amp; Contexte — 2 min <span class="badge green">Yassir</span></h2>
+  <div class="script"><span class="speaker-tag">[YASSIR]</span>
+
+<span class="highlight">Bonjour, nous sommes l'équipe GreenDrop : Yassir Sabbar, Samy Zerouali et Kays Zahidi.</span>
+
+Nous allons vous présenter <span class="highlight">GreenDrop</span>, une plateforme complète de livraison de produits CBD
+éco-responsable que nous avons développée en équipe de 3.
+
+Le projet se compose de <span class="highlight">trois briques principales</span> :
+• Une <span class="highlight">application mobile iOS native</span> en Swift/SwiftUI — développée par Samy et Kays
+• Un <span class="highlight">panel d'administration web</span> en Next.js/React — développé par moi
+• Un <span class="highlight">backend serverless</span> avec 16 Cloud Functions Firebase
+
+<span class="note">→ Le projet représente ~18 600 lignes Swift et ~10 000 lignes TypeScript.</span>
+
+Ce qui rend ce projet intéressant, c'est qu'il couvre <span class="highlight">tout le cycle de vie</span> d'une commande :
+du paiement Stripe jusqu'à la livraison avec suivi GPS en temps réel,
+en passant par la vérification d'identité KYC et le monitoring Grafana.</div>
+</section>
+
+<!-- COLLECTIF 2 : ARCHITECTURE -->
+<section>
+  <h2><span class="icon">2️⃣</span> Architecture Technique — 2 min <span class="badge green">Yassir</span></h2>
+  <div class="script"><span class="speaker-tag">[YASSIR]</span>
+
+<span class="highlight">Côté architecture, nous avons choisi une approche serverless avec Firebase comme socle.</span>
+
+Voici comment les briques communiquent :
+
+• <span class="highlight">L'app mobile</span> communique directement avec Firestore via des listeners temps réel,
+  et avec l'API REST sur Vercel pour les paiements Stripe.
+
+• <span class="highlight">Le panel admin</span> est une app Next.js 16, déployée sur Vercel,
+  qui dialogue aussi avec Firestore et expose 20+ routes API.
+
+• <span class="highlight">Les Cloud Functions</span> s'exécutent automatiquement sur événements :
+  commande créée → notification au marchand
+  statut change → notification au client
+  chauffeur bouge → alerte de proximité si &lt; 500m
+
+Le tout dans un <span class="highlight">monorepo</span> avec admin/, mobile/, et shared/ dans un seul repo Git.
+
+<span class="note">→ Montre le diagramme d'architecture de la documentation</span></div>
+
+  <table>
+    <tr><th>Concept</th><th>Explication rapide</th></tr>
+    <tr><td><strong>Serverless</strong></td><td>Pas de serveur à maintenir, scale auto avec Firebase</td></tr>
+    <tr><td><strong>Real-time</strong></td><td>Firestore listeners = mise à jour instantanée sans polling</td></tr>
+    <tr><td><strong>Event-driven</strong></td><td>Cloud Functions déclenchées par triggers Firestore</td></tr>
+    <tr><td><strong>Monorepo</strong></td><td>admin/ + shared/ + mobile/ dans un seul repo Git</td></tr>
+  </table>
+</section>
+
+<!-- COLLECTIF 3 : MOBILE -->
+<section>
+  <h2><span class="icon">3️⃣</span> Application Mobile — 2 min <span class="badge blue">Samy</span></h2>
+  <div class="script"><span class="speaker-tag">[SAMY]</span>
+
+<span class="highlight">L'app mobile est native iOS, développée en Swift avec SwiftUI.</span>
+
+Elle supporte <span class="highlight">3 rôles</span> avec des interfaces complètement différentes :
+
+<span class="highlight">1. Le Client</span> — parcourir les boutiques, ajouter au panier, payer via Stripe,
+   suivre sa livraison en temps réel sur la carte, laisser un avis.
+
+<span class="highlight">2. Le Chauffeur</span> — accepter des livraisons, navigation GPS vers le client,
+   position partagée toutes les 10 secondes, preuve de livraison par photo.
+
+<span class="highlight">3. Le Marchand</span> — gérer son catalogue produits, voir les commandes en direct,
+   confirmer → préparer → marquer prêt.
+
+L'architecture est <span class="highlight">MVVM réactive</span> : des services singleton avec <code>@Published</code>
+qui déclenchent automatiquement le re-render des vues SwiftUI.
+
+<span class="note">→ La communication temps réel utilise des Firestore snapshot listeners côté iOS.</span></div>
+</section>
+
+<!-- COLLECTIF 4 : PAIEMENTS -->
+<section>
+  <h2><span class="icon">4️⃣</span> Paiements &amp; Sécurité — 2 min <span class="badge purple">Kays</span></h2>
+  <div class="script"><span class="speaker-tag">[KAYS]</span>
+
+<span class="highlight">Côté paiements, nous utilisons Stripe avec le modèle Connect :</span>
+
+• Le <span class="highlight">client</span> paie via Stripe PaymentSheet (total produits + livraison)
+• Le <span class="highlight">marchand</span> reçoit le montant produits sur son compte Stripe Connect
+• Le <span class="highlight">chauffeur</span> reçoit 80% des frais de livraison
+• La <span class="highlight">plateforme</span> conserve 20% comme commission
+
+L'onboarding Connect se fait directement depuis l'app mobile.
+
+<span class="highlight">La sécurité est en 4 couches :</span>
+1. Firebase Auth (JWT)
+2. Firestore Security Rules (matrice par collection + rôle)
+3. API Middleware Next.js (CSRF + validation token)
+4. Cloud Functions (vérification permissions)
+
+<span class="highlight">Pour le KYC</span>, les produits CBD sont restreints.
+L'utilisateur doit uploader sa pièce d'identité + selfie.
+Un admin valide dans le panel → l'utilisateur peut acheter.
+
+<span class="note">→ Les données de paiement ne transitent jamais par nos serveurs — Stripe gère tout (PCI DSS).</span></div>
+</section>
+
+<!-- COLLECTIF 5 : DEMO -->
+<section>
+  <h2><span class="icon">5️⃣</span> Démo Live — 2 min <span class="badge red">Tous</span></h2>
+  <div class="tip green">
+    <strong>Parcours de démo — Chacun montre sa partie :</strong>
+  </div>
+  <ol>
+    <li><span class="badge blue">Samy</span> <strong>Mobile Client</strong> : ouvre l'app → parcourt une boutique → ajoute au panier</li>
+    <li><span class="badge purple">Kays</span> <strong>Paiement</strong> : checkout → paiement Stripe → confirmation</li>
+    <li><span class="badge green">Yassir</span> <strong>Admin /orders</strong> : montre la commande apparaître en temps réel</li>
+    <li><span class="badge purple">Kays</span> <strong>Mobile Marchand</strong> : confirme → prépare → marque prêt</li>
+    <li><span class="badge blue">Samy</span> <strong>Mobile Chauffeur</strong> : passe en ligne → accepte la livraison</li>
+    <li><span class="badge green">Yassir</span> <strong>Admin /drivers</strong> : montre le chauffeur sur la carte + Dashboard KPIs</li>
+  </ol>
+
+  <div class="tip orange">
+    <strong>Si le réseau est lent</strong>
+    Utilisez le mode simulation des chauffeurs dans l'admin (bouton "Start Simulation" sur /drivers). Ça crée des mouvements GPS sans le mobile.
+  </div>
+</section>
+
+<!-- ========================================================== -->
+<!--           PARTIE INDIVIDUELLE — 20 MINUTES                 -->
+<!-- ========================================================== -->
+
+<div class="page-break"></div>
+
+<div class="part-header">
+  <h2><span class="icon">👤</span> Partie Individuelle — 20 minutes</h2>
+  <div class="part-meta">Chaque membre présente sa contribution en profondeur (~7 min chacun)</div>
+</div>
+
+<section>
+  <h2><span class="icon">🗓️</span> Plan Individuel — 20 minutes</h2>
+
+  <div class="timer">
+    <div class="timer-block" style="background:#16a34a; flex:7;"><div class="dur">~7 min</div><div class="label">Yassir — Admin + Backend + DevOps</div></div>
+    <div class="timer-block" style="background:#3b82f6; flex:7;"><div class="dur">~7 min</div><div class="label">Samy — Mobile Client &amp; Livreur</div></div>
+    <div class="timer-block" style="background:#8b5cf6; flex:6;"><div class="dur">~6 min</div><div class="label">Kays — Marchand + Stripe + KYC</div></div>
+  </div>
+</section>
+
+<!-- ========== INDIVIDUEL : YASSIR ========== -->
+<div class="page-break"></div>
+<section>
+  <h2><span class="icon">🟢</span> Yassir Sabbar — Admin Web + Backend + DevOps (~7 min)</h2>
+
+  <h3>Script de présentation</h3>
+  <div class="script"><span class="speaker-tag">[YASSIR — Partie individuelle]</span>
+
+<span class="highlight">J'ai développé le panel d'administration, le backend et toute la chaîne DevOps.</span>
+
+<span class="highlight">1. LE PANEL ADMIN</span> — Next.js 16 / React 19 / Tailwind CSS / shadcn/ui
+
+Le panel permet de gérer toute la plateforme depuis un navigateur :
+• <span class="highlight">Dashboard</span> avec KPIs temps réel : CA, commandes, taux livraison, chauffeurs actifs
+• <span class="highlight">Gestion commandes</span> : vue tableau + Kanban dispatch board + timeline détaillée
+• <span class="highlight">Suivi chauffeurs</span> : carte interactive MapLibre avec positions GPS en direct
+• <span class="highlight">Zones de livraison</span> : éditeur de polygones sur carte, import/export GeoJSON
+• <span class="highlight">Vérifications KYC</span> : workflow d'approbation des documents d'identité
+• <span class="highlight">14 hooks custom React</span> pour séparer logique métier et UI
+• Bilingue FR/EN, mode clair/sombre, export RGPD
+
+<span class="highlight">2. LE BACKEND</span> — 16 Cloud Functions Firebase
+
+• 11 endpoints HTTPS : création commande, mise à jour statut, localisation,
+  upload fichiers, notifications push
+• 4 triggers Firestore automatiques :
+  - Commande créée → timeline + matching chauffeur
+  - Statut change → notification client + libération chauffeur
+  - Chauffeur bouge → alerte proximité &lt; 500m
+  - User créé avec rôle "driver" → sync auto collection drivers
+• 1 tâche planifiée : pushMetrics → 20+ métriques vers Grafana
+
+<span class="highlight">3. DEVOPS &amp; MONITORING</span>
+
+• Pipeline CI/CD GitHub Actions : 7 jobs parallélisés (lint, typecheck, test, build, audit)
+• Hook Husky pre-commit qui exécute les tests avant chaque commit
+• <span class="highlight">Sentry</span> pour le tracking d'erreurs (web + functions) avec source maps
+• <span class="highlight">Grafana Cloud</span> pour les métriques business poussées toutes les 5 min
+• Déploiement : Vercel (admin, auto sur push) + Firebase (functions, manuel)
+
+<span class="highlight">4. SÉCURITÉ ADMIN</span>
+
+J'ai supprimé Google Sign-In de l'admin — un back-office ne doit jamais permettre
+l'auto-inscription. Les comptes admin sont créés par un administrateur existant
+via la page /users. Le premier compte est créé via Firebase Console.
+
+<span class="note">→ 20+ routes API REST, middleware RBAC, CSRF tokens HMAC-SHA256, Firestore Rules par rôle.</span></div>
+
+  <h3>Points techniques clés</h3>
+  <table>
+    <tr><td><strong>shadcn/ui</strong></td><td>~60 composants accessibles, customisables, basés sur Radix UI</td></tr>
+    <tr><td><strong>MapLibre GL</strong></td><td>Carte open-source (pas Google Maps) pour zones et chauffeurs</td></tr>
+    <tr><td><strong>14 hooks custom</strong></td><td>use-orders, use-drivers, use-users… séparation logique/UI</td></tr>
+    <tr><td><strong>Vitest</strong></td><td>5 suites de tests API (orders, shops, reviews, middleware, GDPR)</td></tr>
+    <tr><td><strong>Graphite push</strong></td><td>Cloud Function pushMetrics → Grafana Cloud toutes les 5 min</td></tr>
+  </table>
+</section>
+
+<!-- ========== INDIVIDUEL : SAMY ========== -->
+<div class="page-break"></div>
+<section>
+  <h2><span class="icon">🔵</span> Samy Zerouali — Mobile iOS Client &amp; Livreur (~7 min)</h2>
+
+  <h3>Script de présentation</h3>
+  <div class="script"><span class="speaker-tag">[SAMY — Partie individuelle]</span>
+
+<span class="highlight">J'ai développé la partie mobile pour le Client et le Chauffeur (Livreur).</span>
+
+<span class="highlight">1. PARTIE CLIENT</span>
+
+L'expérience client est complète de bout en bout :
+• <span class="highlight">Catalogue</span> : navigation par boutique, filtres, recherche, vue carte avec MapKit
+• <span class="highlight">Panier</span> : ajout/suppression, quantité, persistance locale avec CartManager
+• <span class="highlight">Codes promo</span> : validation temps réel via Firestore
+• <span class="highlight">Commande</span> : sélection d'adresse, choix mode de livraison
+• <span class="highlight">Suivi GPS temps réel</span> : la position du chauffeur se met à jour
+  automatiquement sur la carte du client grâce à un Firestore listener
+• <span class="highlight">Avis</span> : notation + commentaire après livraison
+• <span class="highlight">Chat</span> : messagerie temps réel entre client et chauffeur par commande
+
+<span class="highlight">2. PARTIE CHAUFFEUR (LIVREUR)</span>
+
+• <span class="highlight">Dashboard</span> : statistiques du jour (livraisons, gains, note moyenne)
+• <span class="highlight">Statut en ligne/hors ligne</span> : toggle qui met à jour Firestore en direct
+• <span class="highlight">Livraisons disponibles</span> : liste des commandes prêtes à être livrées
+• <span class="highlight">Navigation GPS</span> : CoreLocation envoie la position toutes les 10 secondes
+  → écrit dans Firestore → trigger Cloud Function → mise à jour commande
+  → si &lt; 500m du client → notification push "Votre chauffeur approche"
+• <span class="highlight">Preuve de livraison</span> : le chauffeur prend une photo + entre le code confirmation
+• <span class="highlight">Historique &amp; gains</span> : vue détaillée des livraisons passées et revenus
+
+<span class="highlight">3. ARCHITECTURE TECHNIQUE</span>
+
+L'app utilise le pattern <span class="highlight">MVVM réactif</span> :
+• Des services singleton (<code>AuthService</code>, <code>CartManager</code>, <code>LocationManager</code>)
+  avec des propriétés <code>@Published</code>
+• SwiftUI observe ces propriétés via <code>@EnvironmentObject</code>
+  et re-render automatiquement les vues concernées
+• Firestore <code>addSnapshotListener</code> pour le push server → client instantané
+• Pas de Redux, pas de store externe — on utilise Combine natif d'Apple
+
+<span class="note">→ 18 600 lignes de Swift au total pour l'app mobile complète.</span></div>
+
+  <h3>Points techniques clés</h3>
+  <table>
+    <tr><td><strong>CoreLocation</strong></td><td>Position GPS toutes les 10s, gestion fine batterie</td></tr>
+    <tr><td><strong>Firestore listeners</strong></td><td>Push server → client instantané, pas de polling</td></tr>
+    <tr><td><strong>@Published + @EnvironmentObject</strong></td><td>Binding réactif natif Apple, re-render auto</td></tr>
+    <tr><td><strong>CartManager</strong></td><td>Persistance locale du panier sans connexion</td></tr>
+    <tr><td><strong>Chat temps réel</strong></td><td>Collection Firestore messages, listener par commande</td></tr>
+  </table>
+</section>
+
+<!-- ========== INDIVIDUEL : KAYS ========== -->
+<div class="page-break"></div>
+<section>
+  <h2><span class="icon">🟣</span> Kays Zahidi — Marchand + Paiements + KYC (~6 min)</h2>
+
+  <h3>Script de présentation</h3>
+  <div class="script"><span class="speaker-tag">[KAYS — Partie individuelle]</span>
+
+<span class="highlight">J'ai développé la partie Marchand de l'app mobile, le système de paiements Stripe,
+et la vérification d'identité KYC.</span>
+
+<span class="highlight">1. PARTIE MARCHAND</span>
+
+Le marchand a une interface dédiée dans l'app iOS :
+• <span class="highlight">Dashboard</span> : graphiques CA et nombre de commandes
+• <span class="highlight">Gestion produits</span> : CRUD complet avec upload d'images
+  (nom, prix, description, catégorie, stock, photo)
+• <span class="highlight">Commandes entrantes</span> : liste temps réel via Firestore listener
+  → le marchand confirme → prépare → marque prêt
+• <span class="highlight">Statut boutique</span> : ouvert/fermé, affiché côté client
+
+<span class="highlight">2. PAIEMENTS STRIPE</span>
+
+J'ai intégré Stripe avec deux mécanismes :
+
+<span class="highlight">a) PaymentSheet (côté client)</span>
+  • L'API crée un PaymentIntent avec le montant total
+  • Le client paie via le formulaire natif Stripe
+  • Le webhook <code>payment_intent.succeeded</code> confirme le paiement
+  • La commande est créée dans Firestore seulement après confirmation
+
+<span class="highlight">b) Stripe Connect (marchands &amp; chauffeurs)</span>
+  • Le marchand/chauffeur fait son onboarding directement depuis l'app
+  • Il est redirigé vers Stripe Express pour remplir ses infos (nom, IBAN)
+  • La répartition : marchand = montant produits, chauffeur = 80% livraison,
+    plateforme = 20% livraison
+  • Les IBAN sont stockés uniquement dans Stripe, jamais dans Firestore
+
+<span class="highlight">3. VÉRIFICATION KYC</span>
+
+Pour les produits CBD (restreints aux +18 ans) :
+  • Les produits sont marqués <code>isRestricted: true</code> + <code>minimumAge: 18</code>
+  • Au checkout, si le panier contient un produit restreint → vérification KYC
+  • L'utilisateur upload : pièce d'identité (recto/verso) + selfie
+  • La demande arrive dans <code>verifications</code> avec statut "pending"
+  • Un admin valide dans le panel web
+  • Une fois approuvé → l'utilisateur peut acheter des produits restreints
+
+<span class="highlight">4. POURBOIRES</span>
+  • Après livraison, le client peut laisser un pourboire au chauffeur
+  • Le pourboire est enregistré dans Firestore et visible dans l'historique
+
+<span class="note">→ Aucune donnée bancaire ne transite par nos serveurs — tout passe par Stripe (PCI DSS compliant).</span></div>
+
+  <h3>Points techniques clés</h3>
+  <table>
+    <tr><td><strong>Stripe PaymentSheet</strong></td><td>Formulaire natif Stripe, PCI DSS, pas de saisie côté app</td></tr>
+    <tr><td><strong>Stripe Connect Express</strong></td><td>Onboarding marchand/chauffeur, split automatique</td></tr>
+    <tr><td><strong>KYC workflow</strong></td><td>Upload document → pending → admin review → approved/rejected</td></tr>
+    <tr><td><strong>Firebase Storage</strong></td><td>Upload images produits et documents KYC (limite 10 Mo)</td></tr>
+    <tr><td><strong>MapKit</strong></td><td>Navigation et affichage carte natif iOS</td></tr>
+  </table>
+</section>
+
+<!-- ========== Q&A ========== -->
+<div class="page-break"></div>
+<section>
+  <h2><span class="icon">❓</span> Questions &amp; Réponses — Préparez-vous</h2>
+  <p>Voici les questions les plus probables du jury, classées par membre. Chacun doit maîtriser ses réponses + les questions communes.</p>
+
+  <h3>Questions Communes (toute l'équipe)</h3>
+  <div class="qa">
+    <details>
+      <summary>Pourquoi Firebase et pas un backend classique (Node.js + PostgreSQL) ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> Firebase offre plusieurs avantages pour ce type de projet :
+        <ul>
+          <li><strong>Temps réel natif</strong> — Firestore a des listeners intégrés. Quand le chauffeur bouge, le client voit la position changer instantanément sans WebSockets.</li>
+          <li><strong>Serverless</strong> — Pas de serveur à gérer, scale auto. Cloud Functions se lancent à la demande.</li>
+          <li><strong>Auth intégré</strong> — Firebase Auth gère email/password et Google OAuth avec SDK iOS et Web.</li>
+          <li><strong>Coût MVP</strong> — Modèle pay-per-use, pas de serveur 24/7.</li>
+        </ul>
+        L'inconvénient : pas de relations SQL. Mais Firestore suffit avec des index composites et de la dénormalisation contrôlée.
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment gérez-vous la cohérence des données sans base relationnelle ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>Batch writes</strong> — Mises à jour atomiques multi-documents dans les Cloud Functions.</li>
+          <li><strong>Triggers automatiques</strong> — <code>onUserWriteSyncDriver</code> synchronise users ↔ drivers.</li>
+          <li><strong>Dénormalisation contrôlée</strong> — On stocke <code>shopName</code> dans la commande pour éviter des lectures supplémentaires (pattern standard NoSQL).</li>
+          <li><strong>7 index composites</strong> — Pour les requêtes fréquentes (commandes par user + date, etc.).</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment sécurisez-vous les données sensibles ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> 4 couches de sécurité :
+        <ol>
+          <li><strong>Firebase Auth</strong> — JWT tokens, mots de passe jamais stockés côté app.</li>
+          <li><strong>Firestore Rules</strong> — Règles granulaires par collection. Un client ne lit que ses commandes, un chauffeur ne met à jour que ses livraisons.</li>
+          <li><strong>API Middleware</strong> — CSRF protection HMAC-SHA256, validation Bearer token.</li>
+          <li><strong>Cloud Functions</strong> — Vérification <code>request.auth</code> et rôle avant chaque action.</li>
+        </ol>
+        Les données de paiement ne transitent jamais par nos serveurs — Stripe gère tout (PCI DSS).
+      </div>
+    </details>
+
+    <details>
+      <summary>Ça scale comment avec beaucoup d'utilisateurs ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>Firestore</strong> — Scale auto, conçu par Google pour millions de lectures/seconde.</li>
+          <li><strong>Cloud Functions</strong> — Scale horizontal, chaque invocation indépendante.</li>
+          <li><strong>Vercel</strong> — CDN mondial avec edge functions.</li>
+          <li><strong>Limitation</strong> : le GPS toutes les 10s pourrait coûter cher en écritures Firestore. Solution : réduire la fréquence ou utiliser Realtime Database.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Combien coûte l'infrastructure ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> Presque rien en phase MVP :
+        <ul>
+          <li><strong>Firebase</strong> : plan Blaze — gratuit jusqu'à 50K lectures/jour.</li>
+          <li><strong>Vercel</strong> : plan gratuit hobby.</li>
+          <li><strong>Sentry</strong> : gratuit (5K events/mois).</li>
+          <li><strong>Grafana Cloud</strong> : gratuit (10K séries métriques).</li>
+          <li><strong>Stripe</strong> : 1.4% + 0.25€ par transaction.</li>
+        </ul>
+        Coût total en dev ≈ 0€/mois.
+      </div>
+    </details>
+
+    <details>
+      <summary>Quelles améliorations prévoyez-vous ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>Version Android</strong> — Flutter ou Kotlin Multiplatform.</li>
+          <li><strong>Optimisation GPS</strong> — Realtime Database pour les écritures fréquentes.</li>
+          <li><strong>Notifications push FCM</strong> — Actuellement via Firestore listeners.</li>
+          <li><strong>Tests E2E</strong> — Playwright (web) + XCTest (iOS).</li>
+          <li><strong>Système d'abonnement</strong> — Livraison gratuite pour abonnés.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Si vous deviez refaire le projet, que changeriez-vous ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>Structurer le mobile en modules</strong> — Fichiers Swift trop gros (3375 lignes pour ClientViews). Un fichier par écran.</li>
+          <li><strong>pnpm dès le début</strong> — Conflits lockfiles (bun, npm, pnpm) = bugs CI.</li>
+          <li><strong>Tests plus tôt (TDD)</strong> — Ajoutés après le dev principal.</li>
+          <li><strong>Types partagés</strong> — Package commun TypeScript entre admin et functions.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <h3><span class="badge green">Yassir</span> Questions spécifiques — Admin &amp; Backend</h3>
+  <div class="qa">
+    <details>
+      <summary>Pourquoi Next.js et pas un simple React SPA pour l'admin ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>API Routes</strong> — Backend API (Stripe, webhooks) et frontend dans le même projet.</li>
+          <li><strong>Middleware</strong> — Protection des routes côté serveur (Edge Runtime).</li>
+          <li><strong>Déploiement Vercel</strong> — Auto, preview sur PR, CDN mondial.</li>
+          <li><strong>SSR/SSG</strong> — Flexibilité du server rendering si besoin.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Pourquoi pas de Google Sign-In sur l'admin ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> Choix de sécurité. Avec Google Sign-In, n'importe qui pouvait tenter de se connecter et un profil admin était auto-créé. J'ai supprimé ça : <strong>seul un admin existant crée de nouveaux comptes</strong> via /users. Le premier compte est créé via Firebase Console. C'est le pattern standard pour un back-office.
+      </div>
+    </details>
+
+    <details>
+      <summary>Décrivez votre pipeline CI/CD.</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> GitHub Actions avec 7 jobs :
+        <ol>
+          <li><strong>Admin Lint</strong> — ESLint</li>
+          <li><strong>Admin Type Check</strong> — <code>tsc --noEmit</code></li>
+          <li><strong>Admin Security Audit</strong> — <code>pnpm audit</code></li>
+          <li><strong>Admin Test</strong> — Vitest (dépend de Lint + Type Check)</li>
+          <li><strong>Admin Build</strong> — Build Next.js (dépend de Lint + Type Check)</li>
+          <li><strong>Functions Lint</strong> — ESLint</li>
+          <li><strong>Functions Build</strong> — TypeScript (dépend de Functions Lint)</li>
+        </ol>
+        Jobs indépendants en parallèle. Déploiement admin auto via Vercel. Hook Husky pre-commit en local.
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment monitorez-vous la plateforme en production ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>Sentry</strong> — Erreurs temps réel sur admin + functions, avec source maps.</li>
+          <li><strong>Grafana Cloud</strong> — Dashboard métriques business. Cloud Function <code>pushMetrics</code> → 20+ métriques toutes les 5 min via Graphite.</li>
+          <li><strong>Firebase Crashlytics</strong> — Crash reports mobile iOS.</li>
+        </ul>
+        Alertes Grafana configurables (ex: litiges > seuil → notification Discord).
+      </div>
+    </details>
+  </div>
+
+  <h3><span class="badge blue">Samy</span> Questions spécifiques — Mobile Client &amp; Livreur</h3>
+  <div class="qa">
+    <details>
+      <summary>Pourquoi Swift natif et pas React Native ou Flutter ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li><strong>Performance GPS</strong> — CoreLocation natif pour précision maximale et gestion batterie.</li>
+          <li><strong>MapKit natif</strong> — Intégration carte plus fluide qu'un wrapper cross-platform.</li>
+          <li><strong>SwiftUI</strong> — Framework déclaratif proche de React, data binding natif.</li>
+          <li><strong>Stripe SDK</strong> — PaymentSheet plus stable en natif.</li>
+        </ul>
+        Si Android aussi → Flutter. Mais pour un MVP iOS-only, le natif est le meilleur choix.
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment fonctionne le suivi GPS en temps réel ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> Pipeline en 4 étapes :
+        <ol>
+          <li><strong>CoreLocation</strong> envoie la position du chauffeur toutes les 10 secondes.</li>
+          <li>Écrite dans <code>drivers/{id}.location</code> dans Firestore.</li>
+          <li>Trigger <strong>onDriverLocationUpdate</strong> → met à jour <code>orders/{id}.driverLocation</code>.</li>
+          <li>Client a un listener Firestore sur sa commande → position mise à jour en temps réel sur la carte.</li>
+        </ol>
+        Bonus : si chauffeur &lt; 500m → notification "Votre chauffeur approche" (flag <code>notifiedNearby</code> anti-spam).
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment gérez-vous l'architecture MVVM dans SwiftUI ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li>Services singleton (<code>AuthService</code>, <code>CartManager</code>, <code>LocationManager</code>) avec <code>@Published</code>.</li>
+          <li>SwiftUI observe via <code>@EnvironmentObject</code> → re-render automatique.</li>
+          <li>Firestore <code>addSnapshotListener</code> pour le push server → client.</li>
+          <li>Pas de Redux / store externe → Combine natif Apple.</li>
+        </ul>
+        C'est le pattern recommandé par Apple pour SwiftUI.
+      </div>
+    </details>
+  </div>
+
+  <h3><span class="badge purple">Kays</span> Questions spécifiques — Paiements &amp; KYC</h3>
+  <div class="qa">
+    <details>
+      <summary>Comment fonctionne la répartition des paiements Stripe Connect ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong> Modèle Stripe Connect Express :
+        <ul>
+          <li><strong>Client</strong> paie le total (produits + livraison) via PaymentSheet.</li>
+          <li><strong>Marchand</strong> reçoit le montant produits sur son compte Connect.</li>
+          <li><strong>Chauffeur</strong> reçoit 80% des frais de livraison.</li>
+          <li><strong>Plateforme</strong> garde 20% comme commission.</li>
+        </ul>
+        L'onboarding se fait depuis l'app mobile → Stripe Express (nom, IBAN). Les IBAN sont stockés uniquement dans Stripe, pas dans Firestore.
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment gérez-vous un échec de paiement ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li>PaymentIntent créé avec statut "requires_payment_method".</li>
+          <li>Si échec Stripe → la commande n'est <strong>jamais créée</strong> dans Firestore.</li>
+          <li>Webhook <code>payment_intent.succeeded</code> confirme et met à jour le statut.</li>
+          <li>On ne crée jamais de commande sans confirmation de paiement.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Comment gérez-vous la vérification d'âge (KYC) pour le CBD ?</summary>
+      <div class="answer">
+        <strong>Réponse :</strong>
+        <ul>
+          <li>Produits CBD marqués <code>isRestricted: true</code> + <code>minimumAge: 18</code>.</li>
+          <li>Si panier contient un produit restreint → vérification KYC au checkout.</li>
+          <li>Upload : pièce d'identité (recto/verso) + selfie.</li>
+          <li>Demande dans <code>verifications</code> avec statut "pending".</li>
+          <li>Admin approuve/rejette dans le panel web.</li>
+          <li>Approuvé → l'utilisateur peut acheter des produits restreints.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ========== CHECKLIST ========== -->
+<div class="page-break"></div>
+<section>
+  <h2><span class="icon">✅</span> Checklist Jour J — Pour Toute l'Équipe</h2>
+
+  <h3>Avant la soutenance</h3>
+  <ul class="checklist">
+    <li>Charger l'app mobile sur un iPhone (les 3 comptes démo testés)</li>
+    <li>Admin ouvert sur <code>greendrop-one.vercel.app</code> ou <code>localhost:3000</code></li>
+    <li>Vérifier la connexion au compte admin sur le panel</li>
+    <li>Préparer un produit dans une boutique pour la démo</li>
+    <li>Tester le flux complet une fois (commande → paiement → livraison)</li>
+    <li>Préparer le partage d'écran (iPhone mirroring + navigateur)</li>
+    <li>Avoir le repo GitHub ouvert pour montrer le code si demandé</li>
+    <li>Documentation HTML ouverte en backup (<code>/documentation.html</code>)</li>
+  </ul>
+
+  <h3>Chaque membre vérifie</h3>
+  <ul class="checklist">
+    <li>Je connais parfaitement MA partie et peux l'expliquer en 7 min</li>
+    <li>Je connais les réponses aux questions spécifiques de ma section</li>
+    <li>Je connais aussi les questions communes (architecture, sécurité, Firebase)</li>
+    <li>J'ai relu le script de la partie collective</li>
+    <li>Je sais quand je parle dans la démo live</li>
+  </ul>
+
+  <h3>Le jour même</h3>
+  <ul class="checklist">
+    <li>Chronomètre : 10 min collectif + 20 min individuel = 30 min total</li>
+    <li>Un membre surveille le temps et fait un signe à 8 min (collectif) et à 5 min (individuel)</li>
+    <li>Avoir un plan B si le réseau/la démo plante (captures d'écran, vidéo enregistrée)</li>
+    <li>Parler clairement, ne pas lire les slides, raconter une histoire</li>
+  </ul>
+
+  <div class="tip green">
+    <strong>Dernier conseil</strong>
+    Soyez confiants. Vous avez développé une plateforme complète full-stack en équipe : mobile natif iOS, web admin, backend serverless, paiements Stripe, GPS temps réel, KYC, monitoring, CI/CD. C'est un projet ambitieux et bien exécuté. Le jury va apprécier la profondeur technique et la bonne répartition du travail.
+  </div>
+
+  <div class="tip blue">
+    <strong>Comptes de démo</strong>
+    Client: <code>client1@pec5a.com / client123</code><br>
+    Driver: <code>driver1@pec5a.com / driver123</code><br>
+    Merchant: <code>merchant1@pec5a.com / merchant123</code>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
