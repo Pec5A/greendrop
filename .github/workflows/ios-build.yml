@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - 'mobile/**'
+      - '.github/workflows/ios-build.yml'
   pull_request:
     branches: [main]
     paths:
       - 'mobile/**'
+      - '.github/workflows/ios-build.yml'
 
 jobs:
   build:
