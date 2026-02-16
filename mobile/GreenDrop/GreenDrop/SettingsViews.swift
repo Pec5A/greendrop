@@ -366,7 +366,7 @@ struct EditProfileView: View {
 
 // MARK: - Addresses List View
 struct AddressesListView: View {
-    @StateObject private var addressManager = AddressManager.shared
+    @ObservedObject private var addressManager = AddressManager.shared
     @StateObject private var locationManager = LocationManager()
     @State private var showAddAddress = false
     @State private var isLocating = false
@@ -493,7 +493,7 @@ struct AddressesListView: View {
 
 struct AddressRow: View {
     let address: AddressManager.SavedAddress
-    @StateObject private var addressManager = AddressManager.shared
+    @ObservedObject private var addressManager = AddressManager.shared
 
     var body: some View {
         HStack(spacing: 12) {
@@ -560,7 +560,7 @@ struct AddressRow: View {
 
 // MARK: - Add/Edit Address View
 struct AddEditAddressView: View {
-    @StateObject private var addressManager = AddressManager.shared
+    @ObservedObject private var addressManager = AddressManager.shared
     @StateObject private var locationManager = LocationManager()
     @StateObject private var searchCompleter = AddressSearchCompleter()
     @Environment(\.dismiss) private var dismiss
@@ -910,7 +910,7 @@ struct AddEditAddressView: View {
 
 // MARK: - Address Selection Sheet (for Checkout)
 struct AddressSelectionSheet: View {
-    @StateObject private var addressManager = AddressManager.shared
+    @ObservedObject private var addressManager = AddressManager.shared
     @StateObject private var locationManager = LocationManager()
     @Environment(\.dismiss) private var dismiss
     @State private var showAddAddress = false

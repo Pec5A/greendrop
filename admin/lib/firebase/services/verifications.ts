@@ -135,7 +135,7 @@ const buildHistoryEntry = (
   action,
   actor,
   message: message ?? null,
-  timestamp: serverTimestamp(),
+  timestamp: new Date().toISOString(),
 })
 
 // Map iOS documentType values to web type values

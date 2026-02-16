@@ -98,12 +98,24 @@ final class AppState: ObservableObject {
         }
     }
 
+    private var lastSentLocation: CLLocationCoordinate2D?
+
     private func startDriverLocationTimer() {
         driverLocationTimer?.invalidate()
-        driverLocationTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+        driverLocationTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             Task { @MainActor in
                 guard let location = self.locationManager.location else { return }
+
+                // Only send if moved more than 15 meters
+                if let last = self.lastSentLocation {
+                    let dx = location.latitude - last.latitude
+                    let dy = location.longitude - last.longitude
+                    let distSq = dx * dx + dy * dy
+                    if distSq < 0.000002 { return } // ~15m
+                }
+
+                self.lastSentLocation = location
                 await self.dataService.updateDriverLocation(
                     latitude: location.latitude,
                     longitude: location.longitude,

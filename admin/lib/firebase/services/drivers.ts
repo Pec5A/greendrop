@@ -31,8 +31,8 @@ const convertDriver = (snapshot: any): Driver => {
     currentOrderId: data.currentOrderId ?? null,
     location: data.location
       ? {
-          lat: data.location.lat,
-          lng: data.location.lng,
+          lat: data.location.lat ?? data.location.latitude,
+          lng: data.location.lng ?? data.location.longitude,
           heading: data.location.heading,
           speed: data.location.speed,
           updatedAt:

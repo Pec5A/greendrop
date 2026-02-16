@@ -1370,7 +1370,7 @@ struct CheckoutView: View {
     @EnvironmentObject var cartManager: CartManager
     @EnvironmentObject var authService: AuthService
     @StateObject private var dataService = DataService.shared
-    @StateObject private var addressManager = AddressManager.shared
+    @ObservedObject private var addressManager = AddressManager.shared
     @StateObject private var promoManager = PromoCodeManager.shared
     @StateObject private var tipManager = TipManager.shared
     @StateObject private var scheduleManager = ScheduledDeliveryManager.shared

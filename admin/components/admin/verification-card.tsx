@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
+import { ref, getDownloadURL } from "firebase/storage"
+import { storage } from "@/lib/firebase/config"
 import type { Verification } from "@/lib/types"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -43,6 +45,18 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
     }
     return /(\.png|\.jpg|\.jpeg|\.webp|\.gif)$/i.test(attachmentUrl)
   }
+
+  const openAttachment = useCallback(async (url: string) => {
+    try {
+      const urlObj = new URL(url)
+      const match = urlObj.pathname.match(/\/o\/(.+)$/)
+      const path = match ? decodeURIComponent(match[1]) : null
+      const signedUrl = path ? await getDownloadURL(ref(storage, path)) : url
+      window.open(signedUrl, "_blank")
+    } catch {
+      window.open(url, "_blank")
+    }
+  }, [])
 
   const typeLabels = {
     id: "Government ID",
@@ -209,169 +223,161 @@ export function VerificationCard({ verification, userName, userEmail, onApprove,
       </Card>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-6xl w-full max-h-[85vh] overflow-y-auto space-y-6">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Review Verification</DialogTitle>
+        <DialogContent className="max-w-2xl w-full h-[85vh] flex flex-col gap-0 p-0 overflow-hidden">
+          <DialogHeader className="shrink-0 px-6 pt-6 pb-4">
+            <DialogTitle className="text-lg">Review Verification</DialogTitle>
             <DialogDescription>
-              {typeLabels[verification.type]} • {userName} ({userEmail})
+              {typeLabels[verification.type]} &middot; {userName} ({userEmail})
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <Paperclip className="h-4 w-4" /> Attachments
-                <Badge variant="secondary" className="text-xs">{attachments.length} files</Badge>
-              </div>
-              {attachments.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {attachments.map((attachment) => {
-                    const visual = isImageAttachment(attachment.url, attachment.mimeType)
-                    return (
-                      <div key={attachment.id} className="rounded-xl border border-border/60 p-3 bg-card shadow-sm">
-                        <div className="flex items-center justify-between text-sm font-medium">
-                          <span className="truncate">{attachment.label}</span>
-                          <Button variant="ghost" size="sm" asChild>
-                            <a href={attachment.url} target="_blank" rel="noopener noreferrer">
-                              <Download className="mr-1 h-4 w-4" />
-                              Open
-                            </a>
-                          </Button>
-                        </div>
-                        {visual ? (
-                          <div className="mt-3 overflow-hidden rounded-md border bg-muted">
-                            <StorageImage
-                              src={attachment.url}
-                              alt={attachment.label}
-                              className="h-40 sm:h-56 w-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="mt-3 rounded-md border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground">
-                            Preview not available
-                          </div>
-                        )}
-                        <div className="mt-3 text-xs text-muted-foreground">
-                          {attachment.mimeType || "Unknown type"}
-                          {attachment.size ? ` • ${(attachment.size / 1024 / 1024).toFixed(2)} MB` : ""}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="rounded-lg border border-dashed border-border/60 p-6 text-center text-sm text-muted-foreground">
-                  No attachments were provided for this request.
+          <ScrollArea className="flex-1 min-h-0 px-6 pb-6">
+            <div className="space-y-5">
+              {/* Metadata */}
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                {verification.firstName && (
+                  <>
+                    <dt className="text-muted-foreground">Name</dt>
+                    <dd className="text-right font-medium">{verification.firstName} {verification.lastName}</dd>
+                  </>
+                )}
+                {verification.dateOfBirth && (
+                  <>
+                    <dt className="text-muted-foreground">Date of Birth</dt>
+                    <dd className="text-right font-medium">{new Date(verification.dateOfBirth).toLocaleDateString()}</dd>
+                  </>
+                )}
+                {verification.documentType && (
+                  <>
+                    <dt className="text-muted-foreground">Document</dt>
+                    <dd className="text-right font-medium">
+                      {documentTypeLabels[verification.documentType] || verification.documentType}
+                      {verification.documentNumber && ` — N° ${verification.documentNumber}`}
+                    </dd>
+                  </>
+                )}
+                <dt className="text-muted-foreground">Submitted</dt>
+                <dd className="text-right font-medium">{formatDateTime(verification.submittedAt)}</dd>
+                <dt className="text-muted-foreground">Status</dt>
+                <dd className="text-right">
+                  <Badge variant="outline" className={`text-xs ${statusColors[verification.status]}`}>
+                    {verification.status}
+                  </Badge>
+                </dd>
+                {verification.reviewedBy && (
+                  <>
+                    <dt className="text-muted-foreground">Reviewed By</dt>
+                    <dd className="text-right font-medium">{verification.reviewedBy}</dd>
+                  </>
+                )}
+                {verification.reviewedAt && (
+                  <>
+                    <dt className="text-muted-foreground">Reviewed At</dt>
+                    <dd className="text-right font-medium">{formatDateTime(verification.reviewedAt)}</dd>
+                  </>
+                )}
+              </dl>
+
+              {verification.rejectionReason && (
+                <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                  {verification.rejectionReason}
                 </div>
               )}
-            </div>
 
-            <div className="space-y-4">
-              <div className="rounded-xl border border-border/70 p-4 bg-card shadow-sm text-sm">
-                <div className="text-sm font-semibold">Verification Metadata</div>
-                <Separator className="my-3" />
-                <dl className="grid gap-2 text-xs">
-                  {verification.firstName && (
-                    <div className="flex items-center justify-between">
-                      <dt className="text-muted-foreground">Name</dt>
-                      <dd className="font-medium">
-                        {verification.firstName} {verification.lastName}
-                      </dd>
-                    </div>
-                  )}
-                  {verification.dateOfBirth && (
-                    <div className="flex items-center justify-between">
-                      <dt className="text-muted-foreground">Date of Birth</dt>
-                      <dd className="font-medium">{new Date(verification.dateOfBirth).toLocaleDateString()}</dd>
-                    </div>
-                  )}
-                  {verification.documentType && (
-                    <div className="flex items-center justify-between">
-                      <dt className="text-muted-foreground">Document Type</dt>
-                      <dd className="font-medium">
-                        {documentTypeLabels[verification.documentType] || verification.documentType}
-                      </dd>
-                    </div>
-                  )}
-                  {verification.documentNumber && (
-                    <div className="flex items-center justify-between">
-                      <dt className="text-muted-foreground">Document N°</dt>
-                      <dd className="font-medium">{verification.documentNumber}</dd>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <dt className="text-muted-foreground">Submitted</dt>
-                    <dd className="font-medium">{formatDateTime(verification.submittedAt)}</dd>
+              <Separator />
+
+              {/* Attachments as compact thumbnails */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <Paperclip className="h-4 w-4" /> Attachments
+                  <Badge variant="secondary" className="text-xs">{attachments.length}</Badge>
+                </div>
+                {attachments.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    {attachments.map((attachment) => {
+                      const visual = isImageAttachment(attachment.url, attachment.mimeType)
+                      return (
+                        <button
+                          key={attachment.id}
+                          type="button"
+                          onClick={() => openAttachment(attachment.url)}
+                          className="group block rounded-lg border border-border/60 overflow-hidden hover:border-primary/40 transition-colors text-left cursor-pointer w-full"
+                        >
+                          {visual ? (
+                            <div className="aspect-square bg-muted">
+                              <StorageImage
+                                src={attachment.url}
+                                alt={attachment.label}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="aspect-square bg-muted flex items-center justify-center">
+                              <FileText className="h-8 w-8 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="px-2 py-1.5 text-xs font-medium truncate group-hover:text-primary transition-colors">
+                            {attachment.label}
+                          </div>
+                        </button>
+                      )
+                    })}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <dt className="text-muted-foreground">Status</dt>
-                    <dd className="font-semibold capitalize">{verification.status}</dd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <dt className="text-muted-foreground">Reviewed By</dt>
-                    <dd className="font-medium">{verification.reviewedBy || "—"}</dd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <dt className="text-muted-foreground">Reviewed At</dt>
-                    <dd className="font-medium">{formatDateTime(verification.reviewedAt)}</dd>
-                  </div>
-                </dl>
-                {verification.rejectionReason && (
-                  <div className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
-                    {verification.rejectionReason}
-                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No attachments provided.</p>
                 )}
               </div>
 
-              <div className="rounded-xl border border-border/70 p-4 bg-card shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <Clock className="h-4 w-4" /> Review History
-                </div>
-                <Separator className="my-3" />
-                {history.length > 0 ? (
-                  <ScrollArea className="max-h-64 pr-2">
-                    <div className="space-y-3">
+              {/* History */}
+              {history.length > 0 && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold">
+                      <Clock className="h-4 w-4" /> History
+                    </div>
+                    <div className="space-y-2">
                       {history.map((entry) => (
-                        <div key={entry.id} className="rounded-md border border-border/60 p-3 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-semibold capitalize">{entry.action}</span>
-                            <span className="text-muted-foreground">{formatDateTime(entry.timestamp)}</span>
+                        <div key={entry.id} className="flex items-baseline justify-between text-sm">
+                          <div>
+                            <span className="font-medium capitalize">{entry.action}</span>
+                            <span className="text-muted-foreground"> by {entry.actor}</span>
                           </div>
-                          <p className="mt-1 font-medium">{entry.actor}</p>
-                          {entry.message && <p className="mt-1 text-muted-foreground">{entry.message}</p>}
+                          <span className="text-xs text-muted-foreground shrink-0 ml-4">{formatDateTime(entry.timestamp)}</span>
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
-                ) : (
-                  <p className="text-xs text-muted-foreground">No history recorded yet.</p>
-                )}
-              </div>
+                  </div>
+                </>
+              )}
             </div>
-          </div>
+          </ScrollArea>
 
-          {verification.status === "pending" ? (
-            <div className="flex flex-col gap-2 md:flex-col xl:flex-row">
-              <Button onClick={handleApprove} className="flex-1" disabled={isApproving || isRejecting}>
-                <CheckCircle className="mr-2 h-4 w-4" /> Approve
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  setShowDetails(false)
-                  setShowRejectDialog(true)
-                }}
-                className="flex-1"
-                disabled={isApproving || isRejecting}
-              >
-                <XCircle className="mr-2 h-4 w-4" /> Reject
-              </Button>
-            </div>
-          ) : (
-            <div className="rounded-md border border-border/70 bg-muted/50 p-3 text-sm">
-              This verification was {verification.status} on {formatDateTime(verification.reviewedAt)}.
-            </div>
-          )}
+          {/* Actions - sticky bottom */}
+          <div className="border-t px-6 py-4">
+            {verification.status === "pending" ? (
+              <div className="flex gap-3">
+                <Button onClick={handleApprove} className="flex-1" disabled={isApproving || isRejecting}>
+                  <CheckCircle className="mr-2 h-4 w-4" /> Approve
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setShowDetails(false)
+                    setShowRejectDialog(true)
+                  }}
+                  className="flex-1"
+                  disabled={isApproving || isRejecting}
+                >
+                  <XCircle className="mr-2 h-4 w-4" /> Reject
+                </Button>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center">
+                This verification was {verification.status} on {formatDateTime(verification.reviewedAt)}.
+              </p>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
