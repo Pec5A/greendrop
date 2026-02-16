@@ -8,6 +8,7 @@ import FirebaseFirestore
 import GoogleSignIn
 
 // MARK: - Auth Service
+// swiftlint:disable file_length
 
 /// Manages user authentication via Firebase Auth and Google Sign-In.
 ///
