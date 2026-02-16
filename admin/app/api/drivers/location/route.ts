@@ -36,13 +36,14 @@ export const POST = withAuth(
 
       // Mettre à jour la position
       await adminDb.collection("drivers").doc(driverDoc.id).update({
-        currentLocation: {
-          latitude,
-          longitude,
+        location: {
+          lat: latitude,
+          lng: longitude,
+          heading: heading || 0,
+          speed: speed || 0,
+          updatedAt: new Date(),
         },
-        heading: heading || 0,
-        speed: speed || 0,
-        lastLocationUpdate: new Date(),
+        lastSeenAt: new Date(),
       });
 
       return NextResponse.json({

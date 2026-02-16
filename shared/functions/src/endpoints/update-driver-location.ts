@@ -69,12 +69,12 @@ export const updateDriverLocation = functions.https.onCall(
     // 4. Update location
     await driverRef.update({
       location: {
-        latitude: data.latitude,
-        longitude: data.longitude,
+        lat: data.latitude,
+        lng: data.longitude,
         accuracy: data.accuracy || null,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       },
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      lastSeenAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     console.log(`Driver ${driverId} location updated:`, {

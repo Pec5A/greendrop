@@ -91,7 +91,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       await adminDb.collection("orders").doc(orderId).update(updates)
 
       // Log d'activité
-      await adminDb.collection("activities").add({
+      await adminDb.collection("activityLogs").add({
         type: "order_status_updated",
         orderId,
         userId: auth.userId,

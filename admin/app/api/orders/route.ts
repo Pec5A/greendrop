@@ -179,7 +179,7 @@ export const POST = withAuth(async (request: NextRequest, auth) => {
     await orderRef.set(orderData);
 
     // Créer log d'activité
-    await adminDb.collection("activities").add({
+    await adminDb.collection("activityLogs").add({
       type: "order_created",
       orderId: orderRef.id,
       userId: auth.userId,

@@ -19,8 +19,8 @@ export const onDriverLocationUpdate = functions.firestore
 
     // Check if location changed
     const locationChanged =
-      before.location?.latitude !== after.location?.latitude ||
-      before.location?.longitude !== after.location?.longitude;
+      before.location?.lat !== after.location?.lat ||
+      before.location?.lng !== after.location?.lng;
 
     if (!locationChanged || !after.currentOrderId) {
       return null;
@@ -53,8 +53,8 @@ export const onDriverLocationUpdate = functions.firestore
 
         if (deliveryAddress.lat && deliveryAddress.lng) {
           const distance = calculateDistance(
-            after.location.latitude,
-            after.location.longitude,
+            after.location.lat,
+            after.location.lng,
             deliveryAddress.lat,
             deliveryAddress.lng
           );

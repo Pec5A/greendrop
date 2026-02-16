@@ -34,7 +34,7 @@ export const onOrderStatusChange = functions.firestore
       const batch = db.batch();
 
       // 1. Log activity
-      const activityLogRef = db.collection("activity-logs").doc();
+      const activityLogRef = db.collection("activityLogs").doc();
       batch.set(activityLogRef, {
         entityType: "order",
         entityId: orderId,

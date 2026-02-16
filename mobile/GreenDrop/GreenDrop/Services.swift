@@ -1554,8 +1554,8 @@ final class DataService: ObservableObject {
 
         do {
             var locationData: [String: Any] = [
-                "latitude": latitude,
-                "longitude": longitude,
+                "lat": latitude,
+                "lng": longitude,
                 "updatedAt": Timestamp(date: Date())
             ]
             if let heading = heading { locationData["heading"] = heading }

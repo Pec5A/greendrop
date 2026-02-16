@@ -71,7 +71,7 @@
       ]
     },
     {
-      "collectionGroup": "activity-logs",
+      "collectionGroup": "activityLogs",
       "queryScope": "COLLECTION",
       "fields": [
         {

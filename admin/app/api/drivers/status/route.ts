@@ -11,7 +11,7 @@ export const POST = withAuth(
       const body = await request.json();
       const { status } = body;
 
-      const validStatuses = ["available", "busy", "offline"];
+      const validStatuses = ["online", "offline", "busy", "break"];
       if (!status || !validStatuses.includes(status)) {
         return NextResponse.json(
           { error: "Bad Request", message: `Statut invalide. Valeurs acceptées: ${validStatuses.join(", ")}` },
@@ -38,11 +38,11 @@ export const POST = withAuth(
       // Mettre à jour le statut
       await adminDb.collection("drivers").doc(driverDoc.id).update({
         status,
-        updatedAt: new Date(),
+        lastSeenAt: new Date(),
       });
 
       // Log d'activité
-      await adminDb.collection("activities").add({
+      await adminDb.collection("activityLogs").add({
         type: "driver_status_changed",
         driverId: driverDoc.id,
         userId: auth.userId,

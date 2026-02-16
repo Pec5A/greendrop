@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 
 const db = admin.firestore();
 
-type DriverStatus = "online" | "offline" | "busy";
+type DriverStatus = "online" | "offline" | "busy" | "break";
 
 interface UpdateStatusRequest {
   status: DriverStatus;
@@ -28,11 +28,11 @@ export const updateDriverStatus = functions.https.onCall(
     const driverId = context.auth.uid;
 
     // 2. Validate input
-    const validStatuses: DriverStatus[] = ["online", "offline", "busy"];
+    const validStatuses: DriverStatus[] = ["online", "offline", "busy", "break"];
     if (!validStatuses.includes(data.status)) {
       throw new functions.https.HttpsError(
         "invalid-argument",
-        "Status must be 'online', 'offline', or 'busy'"
+        "Status must be 'online', 'offline', 'busy', or 'break'"
       );
     }
 
@@ -60,11 +60,11 @@ export const updateDriverStatus = functions.https.onCall(
     batch.update(driverRef, {
       status: data.status,
       isAvailable: data.status === "online",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      lastSeenAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     // 5. Log activity
-    const activityLogRef = db.collection("activity-logs").doc();
+    const activityLogRef = db.collection("activityLogs").doc();
     batch.set(activityLogRef, {
       entityType: "driver",
       entityId: driverId,
