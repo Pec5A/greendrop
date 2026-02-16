@@ -3,6 +3,7 @@ import { adminAuth, adminDb } from "./firebase-admin"
 import { rateLimit } from "./rate-limit"
 import * as Sentry from "@sentry/nextjs"
 import crypto from "crypto"
+import logger from "./logger"
 
 export interface AuthenticatedRequest extends NextRequest {
   userId?: string
@@ -92,7 +93,7 @@ export async function verifyAuth(request: NextRequest): Promise<{
       userRole: userData?.role || "user",
     }
   } catch (error: any) {
-    console.error("[Auth] Verification failed:", error.code || error.message)
+    logger.error("Auth verification failed", { code: error.code, error: error.message })
     return null
   }
 }
@@ -108,13 +109,23 @@ export function withAuth(
   }
 ) {
   return async (request: NextRequest) => {
+    const start = Date.now()
+    const method = request.method
+    const path = new URL(request.url).pathname
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+    const userAgent = request.headers.get("user-agent") || ""
+
     // Rate limiting check
     const rateLimitResponse = rateLimit(request, options?.rateLimit ?? { limit: 60, windowSec: 60 })
-    if (rateLimitResponse) return rateLimitResponse
+    if (rateLimitResponse) {
+      logger.warn("Rate limited", { method, path, status: 429, duration: Date.now() - start, ip, userAgent })
+      return rateLimitResponse
+    }
 
     const auth = await verifyAuth(request)
 
     if (!auth) {
+      logger.warn("Unauthorized request", { method, path, status: 401, duration: Date.now() - start, ip, userAgent })
       return NextResponse.json(
         { error: "Unauthorized", message: "Token d'authentification invalide ou manquant" },
         { status: 401 }
@@ -128,6 +139,10 @@ export function withAuth(
       auth.userRole !== "supervisor" &&
       auth.userRole !== options.requiredRole
     ) {
+      logger.warn("Forbidden request", {
+        method, path, status: 403, duration: Date.now() - start,
+        userId: auth.userId, userRole: auth.userRole, ip, userAgent,
+      })
       return NextResponse.json(
         { error: "Forbidden", message: `Accès réservé aux ${options.requiredRole}s` },
         { status: 403 }
@@ -135,10 +150,28 @@ export function withAuth(
     }
 
     try {
-      return await handler(request, auth)
+      const response = await handler(request, auth)
+      const status = response.status
+      const duration = Date.now() - start
+      const logMeta = { method, path, status, duration, userId: auth.userId, userRole: auth.userRole, ip, userAgent }
+
+      if (status >= 500) {
+        logger.error("API request", logMeta)
+      } else if (status >= 400) {
+        logger.warn("API request", logMeta)
+      } else {
+        logger.http("API request", logMeta)
+      }
+
+      return response
     } catch (error: any) {
+      const duration = Date.now() - start
       Sentry.captureException(error)
-      console.error("API error:", error)
+      logger.error("API request failed", {
+        method, path, status: 500, duration,
+        userId: auth.userId, userRole: auth.userRole, ip, userAgent,
+        error: error.message,
+      })
       return NextResponse.json({ error: "Internal Server Error", message: error.message }, { status: 500 })
     }
   }
@@ -149,7 +182,7 @@ export function withAuth(
  */
 export function handleApiError(error: any): NextResponse {
   Sentry.captureException(error)
-  console.error("API Error:", error)
+  logger.error("API Error", { error: error.message, code: error.code })
 
   if (error.code === "permission-denied") {
     return NextResponse.json(

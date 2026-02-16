@@ -117,6 +117,56 @@ groups:
           summary: "Aucun chauffeur connecté sur la plateforme"
           description: "0 chauffeurs en ligne depuis 10 min. Les commandes ne peuvent pas être livrées."
 
+      # ── Taux d'erreur API élevé (Loki) ─────────────
+      - uid: greendrop-api-error-rate
+        title: "Taux d'erreur API > 10%"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: loki
+            model:
+              expr: "sum(count_over_time({app=\"greendrop-admin\"} | json | method != `` | status >= 500 [10m])) / sum(count_over_time({app=\"greendrop-admin\"} | json | method != `` [10m])) * 100"
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [10]
+        for: 10m
+        labels:
+          severity: critical
+          team: engineering
+        annotations:
+          summary: "Taux d'erreur API supérieur à 10%"
+          description: "{{ $values.A }}% des requêtes API renvoient une erreur 5xx depuis 10 min."
+
+      # ── Latence API élevée (Loki) ───────────────────
+      - uid: greendrop-api-high-latency
+        title: "Latence API moyenne > 2000ms"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: loki
+            model:
+              expr: "avg_over_time({app=\"greendrop-admin\"} | json | method != `` | unwrap duration [15m])"
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [2000]
+        for: 15m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "Latence API moyenne supérieure à 2 secondes"
+          description: "Latence moyenne: {{ $values.A }}ms sur les 15 dernières minutes."
+
       # ── Baisse de revenu journalier ────────────────
       - uid: greendrop-revenue-drop
         title: "Revenu journalier = 0€ après 12h"

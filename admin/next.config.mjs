@@ -2,6 +2,7 @@ import { withSentryConfig } from "@sentry/nextjs"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ["winston", "winston-loki"],
   typescript: {
     ignoreBuildErrors: false,
   },

@@ -7,11 +7,20 @@
       "type": "datasource",
       "pluginId": "graphite",
       "pluginName": "Graphite"
+    },
+    {
+      "name": "DS_LOKI",
+      "label": "Loki",
+      "description": "Grafana Cloud Loki data source",
+      "type": "datasource",
+      "pluginId": "loki",
+      "pluginName": "Loki"
     }
   ],
   "__requires": [
     { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
-    { "type": "datasource", "id": "graphite", "name": "Graphite", "version": "1.0.0" }
+    { "type": "datasource", "id": "graphite", "name": "Graphite", "version": "1.0.0" },
+    { "type": "datasource", "id": "loki", "name": "Loki", "version": "1.0.0" }
   ],
   "id": null,
   "uid": "greendrop-kpi",
@@ -289,6 +298,193 @@
         "defaults": {
           "custom": { "fillOpacity": 15 }
         }
+      }
+    },
+    {
+      "id": 40,
+      "title": "Trafic & Logs",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+      "panels": []
+    },
+    {
+      "id": 41,
+      "title": "Requêtes API / 5min",
+      "type": "stat",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 27 },
+      "targets": [
+        {
+          "expr": "count_over_time({app=\"greendrop-admin\"} [5m])",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 500 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 42,
+      "title": "Visiteurs uniques / 24h",
+      "type": "stat",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 27 },
+      "targets": [
+        {
+          "expr": "count(sum by (sessionId) (count_over_time({app=\"greendrop-admin\"} | json | __error__=`` | type=`page_view` [$__auto])))",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "purple" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 43,
+      "title": "Latence moyenne (ms)",
+      "type": "gauge",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 27 },
+      "targets": [
+        {
+          "expr": "avg_over_time({app=\"greendrop-admin\"} | json | __error__=`` | duration > 0 | unwrap duration [5m])",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "min": 0,
+          "max": 2000,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 1000 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 44,
+      "title": "Taux d'erreur (%)",
+      "type": "gauge",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 27 },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({app=\"greendrop-admin\"} | json | __error__=`` | status >= 500 [5m])) / sum(count_over_time({app=\"greendrop-admin\"} | json | __error__=`` | status > 0 [5m])) * 100",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 45,
+      "title": "Requêtes par endpoint",
+      "type": "barchart",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
+      "targets": [
+        {
+          "expr": "sum by (path) (count_over_time({app=\"greendrop-admin\"} | json | __error__=`` [$__interval]))",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    },
+    {
+      "id": 47,
+      "title": "Pages vues",
+      "type": "timeseries",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({app=\"greendrop-admin\"} | json | __error__=`` | type=`page_view` [$__auto]))",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" },
+          "custom": { "fillOpacity": 20 }
+        }
+      }
+    },
+    {
+      "id": 46,
+      "title": "Logs en temps réel",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 39 },
+      "targets": [
+        {
+          "expr": "{app=\"greendrop-admin\"}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "wrapLogMessage": true
       }
     }
   ],

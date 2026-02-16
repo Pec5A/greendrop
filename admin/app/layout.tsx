@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/lib/language-context"
 import { AuthWrapper } from "@/components/auth/auth-wrapper"
+import { AnalyticsProvider } from "@/components/analytics-provider"
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
@@ -75,7 +76,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="greendrop-theme">
           <LanguageProvider>
-            <AuthWrapper>{children}</AuthWrapper>
+            <AuthWrapper>
+              <AnalyticsProvider>{children}</AnalyticsProvider>
+            </AuthWrapper>
           </LanguageProvider>
           <Toaster />
         </ThemeProvider>
