@@ -24,6 +24,9 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: List available simulators
+        run: xcrun simctl list devices available | head -30
+
       - name: Resolve SPM dependencies
         working-directory: mobile/GreenDrop
         run: xcodebuild -resolvePackageDependencies -project GreenDrop.xcodeproj -scheme GreenDrop
@@ -34,6 +37,6 @@ jobs:
           xcodebuild build \
             -project GreenDrop.xcodeproj \
             -scheme GreenDrop \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -destination 'generic/platform=iOS Simulator' \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO
