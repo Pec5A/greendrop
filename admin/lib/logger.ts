@@ -2,6 +2,7 @@ import winston from "winston"
 import LokiTransport from "winston-loki"
 
 const isProd = process.env.NODE_ENV === "production"
+const isVercel = !!process.env.VERCEL
 
 const transports: winston.transport[] = [
   new winston.transports.Console({
@@ -26,8 +27,8 @@ if (process.env.LOKI_HOST && process.env.LOKI_USER_ID && process.env.GRAFANA_LOK
       basicAuth: `${process.env.LOKI_USER_ID}:${process.env.GRAFANA_LOKI_TOKEN}`,
       labels: { app: "greendrop-admin", environment: isProd ? "production" : "development" },
       json: true,
-      batching: true,
-      interval: 5,
+      batching: !isVercel,
+      interval: isVercel ? 0 : 5,
       replaceTimestamp: true,
       format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       onConnectionError: (err: Error) => console.error("[Loki] Connection error:", err.message),
