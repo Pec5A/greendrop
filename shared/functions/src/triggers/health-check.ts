@@ -88,21 +88,15 @@ export const healthCheck = functions.pubsub
 
       let deliveredCount = 0;
       let onTimeCount = 0;
-      let cancelledCount = 0;
-      let shippedCount = 0;
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
-      let todayOrders = 0;
       let todayRevenue = 0;
 
       for (const order of orders) {
         const status = order.status || "unknown";
-        if (status === "shipped") shippedCount++;
-        if (status === "cancelled") cancelledCount++;
 
         const createdAt = order.createdAt?.toDate?.() ?? new Date(order.createdAt);
         if (createdAt >= todayStart) {
-          todayOrders++;
           todayRevenue += order.totalAmount || 0;
         }
 
