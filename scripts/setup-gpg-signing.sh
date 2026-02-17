@@ -133,11 +133,7 @@ MY_EMAIL="$GIT_EMAIL"
 echo -e "${BLUE}Rebase en cours... (signe uniquement les commits de ${MY_EMAIL})${NC}"
 
 GIT_COMMITTER_NAME="$GIT_NAME" GIT_COMMITTER_EMAIL="$GIT_EMAIL" \
-git rebase --root --exec "
-if [ \"\$(git log -1 --format='%ae')\" = \"${MY_EMAIL}\" ]; then
-    git commit --amend --no-edit -S
-fi
-"
+git rebase --root --exec "if [ \"\$(git log -1 --format='%ae')\" = \"${MY_EMAIL}\" ]; then git commit --amend --no-edit -S; fi"
 
 echo ""
 echo -e "${GREEN}Tous tes commits sont maintenant signés !${NC}"
