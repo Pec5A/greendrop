@@ -39,6 +39,7 @@ greendrop/
 │   │   ├── disputes/       # Gestion des litiges
 │   │   ├── verifications/  # Verification KYC
 │   │   ├── legal-zones/    # Zones de livraison
+│   │   ├── monitoring/     # Dashboards Grafana (5 dashboards)
 │   │   └── config/         # Configuration plateforme
 │   ├── components/         # Composants React
 │   │   ├── ui/             # Composants shadcn/ui (~60)
@@ -61,6 +62,8 @@ greendrop/
 │   │   │   ├── APIService.swift
 │   │   │   ├── Services.swift
 │   │   │   ├── PaymentService.swift
+│   │   │   ├── LoggingService.swift    # Telemetrie mobile (buffer → Loki)
+│   │   │   ├── MobileConfig.swift      # Constantes (endpoints, API keys)
 │   │   │   ├── LoginView.swift
 │   │   │   ├── ClientViews.swift
 │   │   │   ├── DriverViews.swift
@@ -84,6 +87,13 @@ greendrop/
 │   │       └── triggers/   # Triggers Firestore
 │   ├── docs/               # Documentation technique
 │   │   └── architecture/   # Diagrammes UML
+│   ├── grafana/            # Dashboards et alertes Grafana
+│   │   ├── dashboard.json          # Business KPIs
+│   │   ├── operations-dashboard.json
+│   │   ├── admin-dashboard.json
+│   │   ├── mobile-dashboard.json
+│   │   ├── funnel-dashboard.json
+│   │   └── alerts.yaml             # 12 regles d'alertes
 │   ├── firebase.json       # Configuration Firebase
 │   ├── firestore.rules     # Regles de securite Firestore
 │   ├── storage.rules       # Regles Firebase Storage
@@ -100,7 +110,7 @@ greendrop/
 | Couche | Technologies |
 |--------|-------------|
 | **Frontend Web** | Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui, Radix UI |
-| **Mobile iOS** | Swift, SwiftUI, MVVM, Firebase SDK, Google Sign-In, MapKit, Stripe PaymentSheet |
+| **Mobile iOS** | Swift, SwiftUI, MVVM, Firebase SDK, Google Sign-In, MapKit, Stripe PaymentSheet, Sentry |
 | **Backend** | Next.js API Routes, Firebase Cloud Functions (Node.js 20) |
 | **Base de donnees** | Cloud Firestore (NoSQL) |
 | **Authentification** | Firebase Auth (Email/Password + Google OAuth) |
@@ -108,6 +118,7 @@ greendrop/
 | **Paiements** | Stripe Connect (PaymentSheet + Connect Onboarding) |
 | **Cartographie** | MapLibre GL JS (web), MapKit (iOS) |
 | **Graphiques** | Recharts |
+| **Monitoring** | Grafana Cloud (Graphite + Loki), Sentry, Firebase Crashlytics, Discord Webhooks |
 | **Formulaires** | React Hook Form + Zod |
 | **Tests** | Vitest, XCTest, XCUITest |
 | **CI/CD** | GitHub Actions |
@@ -146,6 +157,7 @@ greendrop/
 | **Litiges** | Resolution des litiges avec systeme de priorite |
 | **Zones legales** | Editeur cartographique des zones de livraison et zones restreintes |
 | **Chat** | Visualisation des conversations client/livreur |
+| **Monitoring** | 5 dashboards Grafana (KPIs, Operations, Admin, Mobile, Funnel), liens directs |
 | **Configuration** | Parametrage global de la plateforme |
 | **i18n** | Support multilingue (FR/EN) |
 | **Theme** | Mode clair / sombre |
@@ -269,6 +281,36 @@ FIREBASE_ADMIN_PRIVATE_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+
+# Monitoring — Grafana Public Dashboards
+NEXT_PUBLIC_GRAFANA_PUBLIC_KPI=
+NEXT_PUBLIC_GRAFANA_PUBLIC_OPERATIONS=
+NEXT_PUBLIC_GRAFANA_PUBLIC_ADMIN=
+NEXT_PUBLIC_GRAFANA_PUBLIC_MOBILE=
+NEXT_PUBLIC_GRAFANA_PUBLIC_FUNNEL=
+```
+
+Cloud Functions (`shared/functions/.env`) :
+
+```env
+# Grafana Cloud
+GRAFANA_URL=
+GRAFANA_USER=
+GRAFANA_API_KEY=
+
+# Loki (logs)
+LOKI_HOST=
+LOKI_USER_ID=
+GRAFANA_LOKI_TOKEN=
+
+# Sentry
+SENTRY_DSN=
+
+# Mobile Logging
+MOBILE_LOG_API_KEY=
+
+# Alertes
+DISCORD_WEBHOOK_URL=
 ```
 
 ---
@@ -322,6 +364,7 @@ Les Cloud Functions gerent la logique asynchrone et les triggers Firestore.
 | `updateDriverStatus` | Changement de statut livreur |
 | `uploadFile` | Upload de fichiers vers Storage |
 | `sendNotification` | Envoi de notifications push |
+| `logMobileEvents` | Reception des logs mobile en batch (→ Loki) |
 
 ### Triggers Firestore
 
@@ -330,6 +373,55 @@ Les Cloud Functions gerent la logique asynchrone et les triggers Firestore.
 | `onOrderCreated` | Notification au commercant + matching livreur automatique |
 | `onOrderStatusChange` | Notifications aux parties concernees a chaque etape |
 | `onDriverLocationUpdate` | Mise a jour du suivi temps reel |
+
+### Taches Planifiees (Scheduled)
+
+| Fonction | Intervalle | Description |
+|----------|-----------|-------------|
+| `pushMetrics` | 5 min | Pousse 30+ metriques vers Grafana Cloud (Graphite) |
+| `healthCheck` | 5 min | Verifie 8 seuils critiques, alerte Discord + FCM + Firestore |
+
+---
+
+## Monitoring & Observabilite
+
+### Stack d'observabilite
+
+| Outil | Role |
+|-------|------|
+| **Grafana Cloud (Graphite)** | 30+ metriques business poussees toutes les 5 min via `pushMetrics` |
+| **Grafana Cloud (Loki)** | Logs structures admin (Winston) + mobile (Cloud Function `logMobileEvents`) |
+| **Sentry** | Error tracking + performance tracing (admin, Cloud Functions, mobile iOS) |
+| **Firebase Crashlytics** | Crash reports mobile iOS |
+| **Discord Webhooks** | Alertes automatiques via `healthCheck` |
+| **FCM Push** | Notifications push aux admins en cas d'alerte critique |
+
+### Dashboards Grafana (5)
+
+| Dashboard | Source | Metriques cles |
+|-----------|--------|---------------|
+| **Business KPIs** | Graphite | Commandes, revenus, utilisateurs, chauffeurs, verifications |
+| **Operations** | Graphite | Duree livraison, utilisation chauffeurs, commandes par zone |
+| **Admin Performance** | Loki | Page views, latence API p50/p95/p99, taux d'erreurs |
+| **Mobile** | Loki | Lancements, sessions, erreurs API, versions |
+| **User Funnel** | Graphite | DAU/WAU/MAU, taux conversion inscription→commande |
+
+### Health Check automatique (toutes les 5 min)
+
+8 verifications avec alerte Discord + notification push + log Firestore :
+
+- Aucun chauffeur en ligne
+- Utilisation chauffeurs > 90%
+- Litiges ouverts > 10
+- Verifications KYC en attente > 20
+- Taux de livraison < 80%
+- Revenu journalier = 0 apres 12h
+- Commandes expediees bloquees > 2h
+- Aucune inscription depuis 18h
+
+### Mobile Logging (LoggingService)
+
+Singleton iOS avec buffer (20 events max, flush toutes les 30s) qui envoie les logs vers la Cloud Function `logMobileEvents` → Loki (`app: "greendrop-mobile"`). Events instrumentes : screen views, appels API (avec duree), erreurs, flux commande, login.
 
 ---
 

@@ -134,9 +134,9 @@
     <div class="role">Admin Web + Backend + DevOps</div>
     <ul>
       <li><strong>Panel d'administration</strong> — Next.js 16 / React 19 / Tailwind CSS / shadcn/ui</li>
-      <li><strong>Cloud Functions</strong> — 16 fonctions Firebase (endpoints + triggers)</li>
+      <li><strong>Cloud Functions</strong> — 22 fonctions Firebase (endpoints + triggers + scheduled)</li>
       <li><strong>CI/CD</strong> — GitHub Actions (7 jobs), Husky pre-commit</li>
-      <li><strong>Monitoring</strong> — Sentry + Grafana Cloud</li>
+      <li><strong>Monitoring</strong> — Grafana Cloud (5 dashboards, 12 alertes) + Sentry + healthCheck → Discord + FCM</li>
       <li><strong>Base de données</strong> — Modélisation Firestore (15 collections) + Security Rules</li>
       <li><strong>API REST</strong> — 20+ routes Next.js API avec middleware RBAC + CSRF</li>
     </ul>
@@ -369,23 +369,33 @@ Le panel permet de gérer toute la plateforme depuis un navigateur :
 • <span class="highlight">14 hooks custom React</span> pour séparer logique métier et UI
 • Bilingue FR/EN, mode clair/sombre, export RGPD
 
-<span class="highlight">2. LE BACKEND</span> — 16 Cloud Functions Firebase
+<span class="highlight">2. LE BACKEND</span> — 22 Cloud Functions Firebase
 
-• 11 endpoints HTTPS : création commande, mise à jour statut, localisation,
-  upload fichiers, notifications push
-• 4 triggers Firestore automatiques :
+• 12 endpoints HTTPS : création commande, mise à jour statut, localisation,
+  upload fichiers, notifications push, logMobileEvents (logs mobile → Loki)
+• 7 triggers Firestore automatiques :
   - Commande créée → timeline + matching chauffeur
   - Statut change → notification client + libération chauffeur
   - Chauffeur bouge → alerte proximité &lt; 500m
   - User créé avec rôle "driver" → sync auto collection drivers
-• 1 tâche planifiée : pushMetrics → 20+ métriques vers Grafana
+  - Triggers auto notifications admin (commandes, vérifications, litiges)
+• 3 tâches planifiées :
+  - pushMetrics → 30+ métriques vers Grafana toutes les 5 min
+  - healthCheck → 8 seuils critiques → Discord + FCM + Firestore toutes les 5 min
 
 <span class="highlight">3. DEVOPS &amp; MONITORING</span>
 
 • Pipeline CI/CD GitHub Actions : 7 jobs parallélisés (lint, typecheck, test, build, audit)
 • Hook Husky pre-commit qui exécute les tests avant chaque commit
-• <span class="highlight">Sentry</span> pour le tracking d'erreurs (web + functions) avec source maps
-• <span class="highlight">Grafana Cloud</span> pour les métriques business poussées toutes les 5 min
+• <span class="highlight">Sentry</span> pour le tracking d'erreurs (web + functions + mobile) avec source maps
+• <span class="highlight">Grafana Cloud</span> — 5 dashboards (KPIs, Opérations, Admin, Mobile, Funnel)
+  → 30+ métriques Graphite + Logs Loki (admin Winston + mobile LoggingService)
+  → 12 règles d'alertes configurées
+• <span class="highlight">Health Check automatique</span> — Cloud Function toutes les 5 min
+  → Vérifie 8 seuils critiques (chauffeurs, litiges, livraisons, revenus...)
+  → Alertes Discord (webhook), FCM push aux admins, notifications Firestore
+  → Déduplication via alertHistory (cooldown 30 min)
+• Page /monitoring dans l'admin avec liens directs vers les 5 dashboards publics
 • Déploiement : Vercel (admin, auto sur push) + Firebase (functions, manuel)
 
 <span class="highlight">4. SÉCURITÉ ADMIN</span>
@@ -402,7 +412,9 @@ via la page /users. Le premier compte est créé via Firebase Console.
     <tr><td><strong>MapLibre GL</strong></td><td>Carte open-source (pas Google Maps) pour zones et chauffeurs</td></tr>
     <tr><td><strong>14 hooks custom</strong></td><td>use-orders, use-drivers, use-users… séparation logique/UI</td></tr>
     <tr><td><strong>Vitest</strong></td><td>5 suites de tests API (orders, shops, reviews, middleware, GDPR)</td></tr>
-    <tr><td><strong>Graphite push</strong></td><td>Cloud Function pushMetrics → Grafana Cloud toutes les 5 min</td></tr>
+    <tr><td><strong>Graphite push</strong></td><td>Cloud Function pushMetrics → 30+ métriques Grafana Cloud toutes les 5 min</td></tr>
+    <tr><td><strong>Health Check</strong></td><td>Cloud Function healthCheck → 8 seuils critiques → Discord + FCM toutes les 5 min</td></tr>
+    <tr><td><strong>Mobile Logging</strong></td><td>LoggingService iOS → Cloud Function logMobileEvents → Grafana Loki</td></tr>
   </table>
 </section>
 
@@ -594,8 +606,9 @@ Pour les produits CBD (restreints aux +18 ans) :
         <ul>
           <li><strong>Firebase</strong> : plan Blaze — gratuit jusqu'à 50K lectures/jour.</li>
           <li><strong>Vercel</strong> : plan gratuit hobby.</li>
-          <li><strong>Sentry</strong> : gratuit (5K events/mois).</li>
-          <li><strong>Grafana Cloud</strong> : gratuit (10K séries métriques).</li>
+          <li><strong>Sentry</strong> : gratuit (5K events/mois). Couvre admin, functions et mobile.</li>
+          <li><strong>Grafana Cloud</strong> : gratuit (10K séries métriques, 50GB logs). 5 dashboards, 12 alertes, Loki pour les logs.</li>
+          <li><strong>Discord webhook</strong> : gratuit. Alertes healthCheck en temps réel.</li>
           <li><strong>Stripe</strong> : 1.4% + 0.25€ par transaction.</li>
         </ul>
         Coût total en dev ≈ 0€/mois.
@@ -674,11 +687,14 @@ Pour les produits CBD (restreints aux +18 ans) :
       <div class="answer">
         <strong>Réponse :</strong>
         <ul>
-          <li><strong>Sentry</strong> — Erreurs temps réel sur admin + functions, avec source maps.</li>
-          <li><strong>Grafana Cloud</strong> — Dashboard métriques business. Cloud Function <code>pushMetrics</code> → 20+ métriques toutes les 5 min via Graphite.</li>
+          <li><strong>Grafana Cloud</strong> — 5 dashboards (Business KPIs, Opérations, Admin Performance, Mobile, User Funnel). 30+ métriques Graphite poussées toutes les 5 min + logs structurés via Loki.</li>
+          <li><strong>Health Check automatique</strong> — Cloud Function <code>healthCheck</code> toutes les 5 min. Vérifie 8 seuils critiques (chauffeurs, litiges, livraisons...) et envoie des alertes multi-canal : <strong>Discord webhook</strong> (embeds colorés), <strong>FCM push</strong> aux admins, <strong>Firestore notifications</strong>. Déduplication via <code>alertHistory</code> (cooldown 30 min).</li>
+          <li><strong>12 alertes Grafana</strong> — Taux erreur API, latence, aucun chauffeur, disputes, KYC backlog, erreurs mobile, etc.</li>
+          <li><strong>Sentry</strong> — Error tracking + performance tracing sur admin, Cloud Functions et mobile iOS.</li>
+          <li><strong>Mobile Logging</strong> — <code>LoggingService</code> iOS bufferise les événements (screen views, API calls, erreurs) et les envoie vers la Cloud Function <code>logMobileEvents</code> → Loki.</li>
           <li><strong>Firebase Crashlytics</strong> — Crash reports mobile iOS.</li>
         </ul>
-        Alertes Grafana configurables (ex: litiges > seuil → notification Discord).
+        La page <code>/monitoring</code> dans l'admin donne accès direct aux 5 dashboards publics Grafana.
       </div>
     </details>
   </div>
@@ -810,7 +826,7 @@ Pour les produits CBD (restreints aux +18 ans) :
 
   <div class="tip green">
     <strong>Dernier conseil</strong>
-    Soyez confiants. Vous avez développé une plateforme complète full-stack en équipe : mobile natif iOS, web admin, backend serverless, paiements Stripe, GPS temps réel, KYC, monitoring, CI/CD. C'est un projet ambitieux et bien exécuté. Le jury va apprécier la profondeur technique et la bonne répartition du travail.
+    Soyez confiants. Vous avez développé une plateforme complète full-stack en équipe : mobile natif iOS, web admin, backend serverless, paiements Stripe, GPS temps réel, KYC, monitoring complet (5 dashboards Grafana, alertes automatiques Discord/FCM, mobile logging), CI/CD. C'est un projet ambitieux et bien exécuté. Le jury va apprécier la profondeur technique et la bonne répartition du travail.
   </div>
 
   <div class="tip blue">

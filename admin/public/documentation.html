@@ -167,7 +167,7 @@
       <text x="770" y="60" text-anchor="middle" font-size="14" font-weight="700" fill="#4c1d95">⚡ Cloud Functions</text>
       <text x="770" y="82" text-anchor="middle" font-size="11" fill="#374151">Firebase Functions v5</text>
       <line x1="690" y1="95" x2="850" y2="95" stroke="#d1d5db" stroke-width="1"/>
-      <text x="770" y="115" text-anchor="middle" font-size="10" fill="#6b7280">16 fonctions déployées</text>
+      <text x="770" y="115" text-anchor="middle" font-size="10" fill="#6b7280">22 fonctions déployées</text>
       <text x="770" y="130" text-anchor="middle" font-size="10" fill="#6b7280">Triggers Firestore</text>
       <text x="770" y="150" text-anchor="middle" font-size="10" fill="#6b7280">Endpoints HTTPS</text>
       <text x="770" y="170" text-anchor="middle" font-size="10" fill="#6b7280">Scheduled (Cron)</text>
@@ -484,7 +484,7 @@
 <div class="page-break"></div>
 <section id="s4">
   <h2><span class="num">4</span> Panel Admin Web</h2>
-  <p>Application web Next.js 16 hébergée sur Vercel avec 12 pages principales, 14 API routes, et 14 hooks custom pour la gestion complète de la plateforme.</p>
+  <p>Application web Next.js 16 hébergée sur Vercel avec 13 pages principales (dont /monitoring), 14 API routes, et 14 hooks custom pour la gestion complète de la plateforme.</p>
 
   <h3>Pages &amp; Fonctionnalités</h3>
   <div class="diagram-box">
@@ -514,7 +514,7 @@
       <rect x="35" y="308" width="110" height="24" rx="4" fill="#374151"/>
       <text x="90" y="324" text-anchor="middle" font-size="10" fill="#d1d5db">Chat</text>
       <rect x="35" y="338" width="110" height="24" rx="4" fill="#374151"/>
-      <text x="90" y="354" text-anchor="middle" font-size="10" fill="#d1d5db">Configuration</text>
+      <text x="90" y="354" text-anchor="middle" font-size="10" fill="#d1d5db">Monitoring</text>
       <!-- Pages detail -->
       <rect x="190" y="20" width="310" height="170" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
       <text x="345" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#065f46">/dashboard</text>
@@ -566,6 +566,7 @@
     <div class="card purple"><div class="card-title">/disputes</div><div class="card-desc">Litiges : open → investigating → resolved → closed. Priorité, montant, résolution, lien commande</div></div>
     <div class="card cyan"><div class="card-title">/chat</div><div class="card-desc">Messagerie temps réel par commande entre admin, chauffeurs et clients</div></div>
     <div class="card"><div class="card-title">/config</div><div class="card-desc">Feature flags, mode maintenance, paramètres livraison (frais, rayon), paramètres paiement (devise, TVA)</div></div>
+    <div class="card red"><div class="card-title">/monitoring</div><div class="card-desc">5 dashboards Grafana (KPIs, Ops, Admin, Mobile, Funnel). Liens directs vers les dashboards publics. Alertes Discord.</div></div>
   </div>
 
   <h3>Hooks Custom</h3>
@@ -593,7 +594,7 @@
 <div class="page-break"></div>
 <section id="s5">
   <h2><span class="num">5</span> Cloud Functions Firebase</h2>
-  <p>16 fonctions déployées sur Firebase Cloud Functions v5, réparties en 3 catégories : Endpoints HTTPS (11), Triggers Firestore (4), et Scheduled (1).</p>
+  <p>22 fonctions déployées sur Firebase Cloud Functions v5, réparties en 4 catégories : Endpoints HTTPS (12), Triggers Firestore (7), et Scheduled (3).</p>
 
   <h3>Vue d'Ensemble des Fonctions</h3>
   <div class="diagram-box">
@@ -601,8 +602,8 @@
     <svg viewBox="0 0 860 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:860px;margin:0 auto;display:block;">
       <defs><marker id="a5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7280"/></marker></defs>
       <!-- HTTPS Endpoints -->
-      <rect x="20" y="20" width="280" height="340" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
-      <text x="160" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">Endpoints HTTPS (11)</text>
+      <rect x="20" y="20" width="280" height="370" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="160" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">Endpoints HTTPS (12)</text>
       <line x1="40" y1="58" x2="280" y2="58" stroke="#bfdbfe" stroke-width="1"/>
       <text x="40" y="78" font-size="10" font-weight="600" fill="#374151">Commandes</text>
       <text x="50" y="95" font-size="10" fill="#6b7280">• createOrder</text>
@@ -619,6 +620,7 @@
       <text x="50" y="293" font-size="10" fill="#6b7280">• uploadFile</text>
       <text x="50" y="308" font-size="10" fill="#6b7280">• sendNotification (FCM)</text>
       <text x="50" y="323" font-size="10" fill="#6b7280">• registerFCMToken</text>
+      <text x="50" y="338" font-size="10" fill="#6b7280">• logMobileEvents (→ Loki)</text>
 
       <!-- Triggers -->
       <rect x="330" y="20" width="240" height="230" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
@@ -634,11 +636,13 @@
       <text x="360" y="219" font-size="9" fill="#6b7280">onWrite users/{id} → sync drivers collection</text>
 
       <!-- Scheduled -->
-      <rect x="330" y="270" width="240" height="90" rx="12" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
-      <text x="450" y="298" text-anchor="middle" font-size="14" font-weight="700" fill="#4c1d95">Scheduled (1)</text>
+      <rect x="330" y="270" width="240" height="120" rx="12" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="450" y="298" text-anchor="middle" font-size="14" font-weight="700" fill="#4c1d95">Scheduled (3)</text>
       <line x1="350" y1="308" x2="550" y2="308" stroke="#c4b5fd" stroke-width="1"/>
       <text x="350" y="332" font-size="10" fill="#374151">⏰ <tspan font-weight="600">pushMetrics</tspan></text>
-      <text x="360" y="349" font-size="9" fill="#6b7280">Chaque 5 min → 20+ métriques → Grafana</text>
+      <text x="360" y="349" font-size="9" fill="#6b7280">Chaque 5 min → 30+ métriques → Grafana</text>
+      <text x="350" y="369" font-size="10" fill="#374151">🔔 <tspan font-weight="600">healthCheck</tspan></text>
+      <text x="360" y="386" font-size="9" fill="#6b7280">Chaque 5 min → 8 seuils → Discord + FCM</text>
 
       <!-- Integrations -->
       <rect x="610" y="20" width="230" height="340" rx="12" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.5"/>
@@ -679,17 +683,21 @@
       <tr><td><code>onOrderStatusChange</code></td><td><span class="badge green">Trigger</span></td><td>onUpdate orders/*</td><td>Notifications client, libération chauffeur si livré/annulé</td></tr>
       <tr><td><code>onDriverLocationUpdate</code></td><td><span class="badge green">Trigger</span></td><td>onUpdate drivers/*</td><td>Alerte proximité &lt;500m au client</td></tr>
       <tr><td><code>onUserWriteSyncDriver</code></td><td><span class="badge green">Trigger</span></td><td>onWrite users/*</td><td>Synchroniser users ↔ drivers automatiquement</td></tr>
-      <tr><td><code>pushMetrics</code></td><td><span class="badge purple">Cron</span></td><td>Chaque 5 min</td><td>20+ métriques → Grafana Cloud (commandes, CA, drivers, KYC)</td></tr>
+      <tr><td><code>pushMetrics</code></td><td><span class="badge purple">Cron</span></td><td>Chaque 5 min</td><td>30+ métriques → Grafana Cloud (KPIs, opérations, funnel)</td></tr>
+      <tr><td><code>healthCheck</code></td><td><span class="badge purple">Cron</span></td><td>Chaque 5 min</td><td>8 seuils critiques → Discord + FCM + Firestore notifications</td></tr>
+      <tr><td><code>logMobileEvents</code></td><td><span class="badge blue">HTTPS</span></td><td>onRequest</td><td>Batch de logs mobile (auth par API key) → Grafana Loki</td></tr>
     </tbody>
   </table>
 
-  <h3>Métriques Poussées (pushMetrics)</h3>
+  <h3>Métriques Poussées (pushMetrics — 30+)</h3>
   <div class="card-grid">
     <div class="card green"><div class="card-title">Commandes</div><div class="card-desc">total · today · revenue.total · revenue.today · status.{each} · on_time_rate</div></div>
     <div class="card blue"><div class="card-title">Utilisateurs</div><div class="card-desc">total · verified · new_today</div></div>
     <div class="card orange"><div class="card-title">Chauffeurs</div><div class="card-desc">total · online · busy</div></div>
     <div class="card purple"><div class="card-title">Vérifications</div><div class="card-desc">pending · approved · rejected</div></div>
     <div class="card red"><div class="card-title">Litiges &amp; Boutiques</div><div class="card-desc">disputes.open · shops.total</div></div>
+    <div class="card cyan"><div class="card-title">Opérations</div><div class="card-desc">avg_delivery_time · active_deliveries · delivery_success_rate · driver_utilization · orders_by_zone.*</div></div>
+    <div class="card"><div class="card-title">Funnel</div><div class="card-desc">signup_to_order_rate · verification_rate · signups_today · verifications_today · dau · wau · mau</div></div>
   </div>
 </section>
 
@@ -988,50 +996,60 @@
   <h3>Architecture de Monitoring</h3>
   <div class="diagram-box">
     <div class="title">Stack d'Observabilité</div>
-    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:800px;margin:0 auto;display:block;">
+    <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;margin:0 auto;display:block;">
       <defs><marker id="a9" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7280"/></marker></defs>
       <!-- Sources -->
-      <rect x="20" y="30" width="150" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-      <text x="95" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="#065f46">Mobile iOS</text>
-      <text x="95" y="68" text-anchor="middle" font-size="9" fill="#6b7280">Crashlytics</text>
-      <rect x="20" y="100" width="150" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
-      <text x="95" y="122" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">Admin Next.js</text>
-      <text x="95" y="138" text-anchor="middle" font-size="9" fill="#6b7280">@sentry/nextjs</text>
-      <rect x="20" y="170" width="150" height="50" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
-      <text x="95" y="192" text-anchor="middle" font-size="11" font-weight="600" fill="#4c1d95">Cloud Functions</text>
-      <text x="95" y="208" text-anchor="middle" font-size="9" fill="#6b7280">@sentry/node + pushMetrics</text>
-      <!-- Sentry -->
-      <rect x="280" y="60" width="200" height="100" rx="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
-      <text x="380" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#9d174d">Sentry</text>
-      <line x1="300" y1="98" x2="460" y2="98" stroke="#fbcfe8" stroke-width="1"/>
-      <text x="300" y="118" font-size="10" fill="#374151">Error tracking</text>
-      <text x="300" y="135" font-size="10" fill="#374151">Performance tracing</text>
-      <text x="300" y="152" font-size="10" fill="#374151">Source maps (admin)</text>
+      <rect x="20" y="30" width="160" height="65" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="100" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="#065f46">Mobile iOS</text>
+      <text x="100" y="68" text-anchor="middle" font-size="9" fill="#6b7280">LoggingService → Loki</text>
+      <text x="100" y="82" text-anchor="middle" font-size="9" fill="#6b7280">Sentry + Crashlytics</text>
+      <rect x="20" y="115" width="160" height="65" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="100" y="137" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">Admin Next.js</text>
+      <text x="100" y="153" text-anchor="middle" font-size="9" fill="#6b7280">Winston → Loki</text>
+      <text x="100" y="167" text-anchor="middle" font-size="9" fill="#6b7280">@sentry/nextjs</text>
+      <rect x="20" y="200" width="160" height="65" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="100" y="222" text-anchor="middle" font-size="11" font-weight="600" fill="#4c1d95">Cloud Functions</text>
+      <text x="100" y="238" text-anchor="middle" font-size="9" fill="#6b7280">pushMetrics → Graphite</text>
+      <text x="100" y="252" text-anchor="middle" font-size="9" fill="#6b7280">healthCheck → Discord</text>
       <!-- Grafana -->
-      <rect x="280" y="180" width="200" height="100" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-      <text x="380" y="208" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Grafana Cloud</text>
-      <line x1="300" y1="218" x2="460" y2="218" stroke="#fde68a" stroke-width="1"/>
-      <text x="300" y="238" font-size="10" fill="#374151">Graphite endpoint</text>
-      <text x="300" y="255" font-size="10" fill="#374151">Dashboard personnalisé</text>
-      <text x="300" y="272" font-size="10" fill="#374151">Alertes Discord</text>
+      <rect x="280" y="30" width="240" height="150" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="400" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Grafana Cloud</text>
+      <line x1="300" y1="65" x2="500" y2="65" stroke="#fde68a" stroke-width="1"/>
+      <text x="300" y="85" font-size="10" fill="#374151">Graphite — 30+ métriques business</text>
+      <text x="300" y="102" font-size="10" fill="#374151">Loki — Logs structurés (admin + mobile)</text>
+      <text x="300" y="119" font-size="10" fill="#374151">5 dashboards (KPI, Ops, Admin, Mobile, Funnel)</text>
+      <text x="300" y="136" font-size="10" fill="#374151">12 règles d'alertes configurées</text>
+      <text x="300" y="153" font-size="10" fill="#374151">Page /monitoring dans l'admin</text>
+      <!-- Sentry -->
+      <rect x="280" y="200" width="240" height="100" rx="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+      <text x="400" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="#9d174d">Sentry</text>
+      <line x1="300" y1="235" x2="500" y2="235" stroke="#fbcfe8" stroke-width="1"/>
+      <text x="300" y="255" font-size="10" fill="#374151">Error tracking (admin + functions + mobile)</text>
+      <text x="300" y="272" font-size="10" fill="#374151">Performance tracing</text>
+      <text x="300" y="289" font-size="10" fill="#374151">Source maps (admin)</text>
       <!-- Outputs -->
-      <rect x="590" y="30" width="180" height="60" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
-      <text x="680" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">Alertes Email</text>
-      <text x="680" y="72" text-anchor="middle" font-size="9" fill="#6b7280">Erreurs critiques Sentry</text>
-      <rect x="590" y="110" width="180" height="60" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
-      <text x="680" y="135" text-anchor="middle" font-size="11" font-weight="600" fill="#4c1d95">Dashboard Web</text>
-      <text x="680" y="152" text-anchor="middle" font-size="9" fill="#6b7280">Métriques temps réel</text>
-      <rect x="590" y="190" width="180" height="60" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
-      <text x="680" y="215" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">Alertes Grafana</text>
-      <text x="680" y="232" text-anchor="middle" font-size="9" fill="#6b7280">Seuils métriques business</text>
+      <rect x="630" y="30" width="220" height="55" rx="8" fill="#7c3aed20" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="740" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="#4c1d95">Discord Webhook</text>
+      <text x="740" y="72" text-anchor="middle" font-size="9" fill="#6b7280">healthCheck → alertes colorées</text>
+      <rect x="630" y="100" width="220" height="55" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="740" y="122" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">FCM Push Notifications</text>
+      <text x="740" y="142" text-anchor="middle" font-size="9" fill="#6b7280">Alertes critiques → admins</text>
+      <rect x="630" y="170" width="220" height="55" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="740" y="192" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">Firestore Notifications</text>
+      <text x="740" y="212" text-anchor="middle" font-size="9" fill="#6b7280">In-app notification center</text>
+      <rect x="630" y="240" width="220" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="740" y="262" text-anchor="middle" font-size="11" font-weight="600" fill="#065f46">Alertes Email Sentry</text>
+      <text x="740" y="282" text-anchor="middle" font-size="9" fill="#6b7280">Erreurs critiques</text>
       <!-- Arrows -->
-      <line x1="170" y1="55" x2="275" y2="90" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
-      <line x1="170" y1="125" x2="275" y2="110" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
-      <line x1="170" y1="190" x2="275" y2="200" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
-      <line x1="170" y1="200" x2="275" y2="230" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
-      <line x1="480" y1="90" x2="585" y2="60" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
-      <line x1="480" y1="120" x2="585" y2="140" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
-      <line x1="480" y1="240" x2="585" y2="220" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="180" y1="62" x2="275" y2="80" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="180" y1="147" x2="275" y2="110" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="180" y1="230" x2="275" y2="140" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="180" y1="62" x2="275" y2="240" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="180" y1="147" x2="275" y2="255" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="520" y1="80" x2="625" y2="57" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="520" y1="100" x2="625" y2="127" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="520" y1="120" x2="625" y2="197" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
+      <line x1="520" y1="260" x2="625" y2="267" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a9)"/>
     </svg>
   </div>
 
@@ -1039,6 +1057,7 @@
   <table>
     <thead><tr><th>Métrique</th><th>Clé Graphite</th><th>Source</th></tr></thead>
     <tbody>
+      <tr><td colspan="3" style="background:var(--green-light); font-weight:600;">Business KPIs</td></tr>
       <tr><td>Commandes totales</td><td><code>greendrop.orders.total</code></td><td>orders.count()</td></tr>
       <tr><td>Commandes aujourd'hui</td><td><code>greendrop.orders.today</code></td><td>orders.where(today)</td></tr>
       <tr><td>Revenus total</td><td><code>greendrop.orders.revenue.total</code></td><td>sum(orders.total)</td></tr>
@@ -1053,6 +1072,87 @@
       <tr><td>KYC en attente</td><td><code>greendrop.verifications.pending</code></td><td>verifications.where(pending)</td></tr>
       <tr><td>Litiges ouverts</td><td><code>greendrop.disputes.open</code></td><td>disputes.where(open)</td></tr>
       <tr><td>Boutiques total</td><td><code>greendrop.shops.total</code></td><td>shops.count()</td></tr>
+      <tr><td colspan="3" style="background:var(--orange-light); font-weight:600;">Opérations</td></tr>
+      <tr><td>Durée moyenne livraison</td><td><code>greendrop.operations.avg_delivery_time</code></td><td>(deliveredAt - createdAt) en min</td></tr>
+      <tr><td>Livraisons actives</td><td><code>greendrop.operations.active_deliveries</code></td><td>orders.where(shipped)</td></tr>
+      <tr><td>Taux succès livraison</td><td><code>greendrop.operations.delivery_success_rate</code></td><td>delivered/(delivered+cancelled)*100</td></tr>
+      <tr><td>Utilisation chauffeurs</td><td><code>greendrop.operations.driver_utilization</code></td><td>busy/(online+busy)*100</td></tr>
+      <tr><td>Commandes par zone</td><td><code>greendrop.operations.orders_by_zone.*</code></td><td>Par ville/zone</td></tr>
+      <tr><td colspan="3" style="background:var(--purple-light); font-weight:600;">Funnel Utilisateurs</td></tr>
+      <tr><td>Conversion inscription→commande</td><td><code>greendrop.funnel.signup_to_order_rate</code></td><td>users avec commande/total*100</td></tr>
+      <tr><td>Taux vérification</td><td><code>greendrop.funnel.verification_rate</code></td><td>verified/total*100</td></tr>
+      <tr><td>Inscriptions aujourd'hui</td><td><code>greendrop.funnel.signups_today</code></td><td>users.where(today)</td></tr>
+      <tr><td>Vérifications aujourd'hui</td><td><code>greendrop.funnel.verifications_today</code></td><td>verifications.where(approved, today)</td></tr>
+      <tr><td>DAU</td><td><code>greendrop.funnel.dau</code></td><td>Users actifs 24h</td></tr>
+      <tr><td>WAU</td><td><code>greendrop.funnel.wau</code></td><td>Users actifs 7 jours</td></tr>
+      <tr><td>MAU</td><td><code>greendrop.funnel.mau</code></td><td>Users actifs 30 jours</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Dashboards Grafana (5)</h3>
+  <div class="card-grid">
+    <div class="card green"><div class="card-title">📊 Business KPIs</div><div class="card-desc">Commandes, revenus, utilisateurs, chauffeurs, vérifications. Source : Graphite.</div></div>
+    <div class="card orange"><div class="card-title">🚚 Operations</div><div class="card-desc">Durée livraison, utilisation chauffeurs, commandes par zone/statut, taux on-time. Source : Graphite.</div></div>
+    <div class="card blue"><div class="card-title">🖥️ Admin Performance</div><div class="card-desc">Page views, latence API p50/p95/p99, taux d'erreurs, top pages, endpoints lents. Source : Loki.</div></div>
+    <div class="card purple"><div class="card-title">📱 Mobile</div><div class="card-desc">Lancements, sessions, erreurs API, latence, versions, logs live. Source : Loki (via logMobileEvents).</div></div>
+    <div class="card cyan"><div class="card-title">👥 User Funnel</div><div class="card-desc">DAU/WAU/MAU, inscriptions, taux vérification, conversion inscription→commande. Source : Graphite.</div></div>
+  </div>
+
+  <h3>Health Check Automatique (healthCheck — chaque 5 min)</h3>
+  <p>Cloud Function planifiée qui vérifie 8 seuils critiques et envoie des alertes multi-canal avec déduplication (30 min de cooldown via collection <code>alertHistory</code>).</p>
+  <table>
+    <thead><tr><th>Vérification</th><th>Seuil</th><th>Sévérité</th></tr></thead>
+    <tbody>
+      <tr><td>Aucun chauffeur en ligne</td><td>online = 0 pendant 10 min</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>Surcharge chauffeurs</td><td>utilisation > 90%</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Litiges ouverts</td><td>> 10 disputes ouvertes</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>KYC backlog</td><td>> 20 vérifications en attente</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Taux de livraison</td><td>< 80% de livraisons à temps</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Revenu journalier</td><td>0€ après 12h</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Commandes bloquées</td><td>Shipped depuis > 2h</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>Inscriptions</td><td>0 inscriptions depuis 18h</td><td><span class="badge orange">Warning</span></td></tr>
+    </tbody>
+  </table>
+  <h4>Canaux d'alerte</h4>
+  <div class="flow">
+    <div class="flow-step purple">healthCheck</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step blue">Discord Webhook</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step orange">FCM Push (admins)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">Firestore notifications</div>
+  </div>
+
+  <h3>Mobile Logging (LoggingService)</h3>
+  <p>Singleton iOS qui bufferise les événements (max 20) et les envoie toutes les 30s vers la Cloud Function <code>logMobileEvents</code>, qui les pousse vers Loki avec le label <code>app: "greendrop-mobile"</code>.</p>
+  <table>
+    <thead><tr><th>Événement</th><th>Données</th></tr></thead>
+    <tbody>
+      <tr><td><code>screen_view</code></td><td>Nom de l'écran (Home, DriverDashboard, MerchantDashboard...)</td></tr>
+      <tr><td><code>api_call</code></td><td>Endpoint, méthode, durée (ms), status code</td></tr>
+      <tr><td><code>order_started / order_placed / order_error</code></td><td>Flux commande complet</td></tr>
+      <tr><td><code>login_success / login_failure</code></td><td>Méthode (email/google), erreur éventuelle</td></tr>
+      <tr><td><code>app_launch</code></td><td>Version, OS, device</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Alertes Grafana (12 règles)</h3>
+  <table>
+    <thead><tr><th>Alerte</th><th>Seuil</th><th>Source</th><th>Sévérité</th></tr></thead>
+    <tbody>
+      <tr><td>Taux livraison bas</td><td>&lt; 80%</td><td>Graphite</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Disputes ouvertes</td><td>&gt; 10</td><td>Graphite</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>KYC backlog</td><td>&gt; 20</td><td>Graphite</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Aucun chauffeur</td><td>= 0</td><td>Graphite</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>Taux erreur API</td><td>&gt; 10%</td><td>Loki</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>Latence API</td><td>&gt; 2000ms</td><td>Loki</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Erreurs mobile</td><td>&gt; 1%</td><td>Loki</td><td><span class="badge red">Critical</span></td></tr>
+      <tr><td>Erreur API admin</td><td>&gt; 5%</td><td>Loki</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Aucune inscription 24h</td><td>= 0</td><td>Graphite</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Chauffeurs surchargés</td><td>&gt; 90%</td><td>Graphite</td><td><span class="badge orange">Warning</span></td></tr>
+      <tr><td>Pic trafic admin</td><td>&gt; 50 sessions/5min</td><td>Loki</td><td><span class="badge blue">Info</span></td></tr>
+      <tr><td>Revenu = 0€ après 12h</td><td>&lt; 1€</td><td>Graphite</td><td><span class="badge orange">Warning</span></td></tr>
     </tbody>
   </table>
 </section>
@@ -1249,6 +1349,11 @@
       <tr><td><code>SENTRY_AUTH_TOKEN</code></td><td>Token Sentry (source maps)</td><td>sntrys_...</td></tr>
       <tr><td><code>STRIPE_SECRET_KEY</code></td><td>Clé secrète Stripe</td><td>sk_live_...</td></tr>
       <tr><td><code>STRIPE_WEBHOOK_SECRET</code></td><td>Secret webhook Stripe</td><td>whsec_...</td></tr>
+      <tr><td><code>NEXT_PUBLIC_GRAFANA_PUBLIC_KPI</code></td><td>URL public dashboard KPIs</td><td>https://xxx.grafana.net/public-dashboards/...</td></tr>
+      <tr><td><code>NEXT_PUBLIC_GRAFANA_PUBLIC_OPERATIONS</code></td><td>URL public dashboard Ops</td><td>https://xxx.grafana.net/public-dashboards/...</td></tr>
+      <tr><td><code>NEXT_PUBLIC_GRAFANA_PUBLIC_ADMIN</code></td><td>URL public dashboard Admin</td><td>https://xxx.grafana.net/public-dashboards/...</td></tr>
+      <tr><td><code>NEXT_PUBLIC_GRAFANA_PUBLIC_MOBILE</code></td><td>URL public dashboard Mobile</td><td>https://xxx.grafana.net/public-dashboards/...</td></tr>
+      <tr><td><code>NEXT_PUBLIC_GRAFANA_PUBLIC_FUNNEL</code></td><td>URL public dashboard Funnel</td><td>https://xxx.grafana.net/public-dashboards/...</td></tr>
     </tbody>
   </table>
 
@@ -1259,7 +1364,12 @@
       <tr><td><code>GRAFANA_URL</code></td><td>Endpoint Graphite Grafana Cloud</td></tr>
       <tr><td><code>GRAFANA_USER</code></td><td>User ID Grafana Cloud</td></tr>
       <tr><td><code>GRAFANA_API_KEY</code></td><td>Clé API Grafana (scope: metrics write)</td></tr>
+      <tr><td><code>LOKI_HOST</code></td><td>Endpoint Loki Grafana Cloud</td></tr>
+      <tr><td><code>LOKI_USER_ID</code></td><td>User ID Loki</td></tr>
+      <tr><td><code>GRAFANA_LOKI_TOKEN</code></td><td>Token API Loki</td></tr>
       <tr><td><code>SENTRY_DSN</code></td><td>DSN Sentry pour Cloud Functions</td></tr>
+      <tr><td><code>MOBILE_LOG_API_KEY</code></td><td>Clé API pour l'endpoint logMobileEvents</td></tr>
+      <tr><td><code>DISCORD_WEBHOOK_URL</code></td><td>URL webhook Discord pour les alertes healthCheck</td></tr>
     </tbody>
   </table>
 
@@ -1284,7 +1394,7 @@
   <p style="color:var(--gray-500); font-size:14px; margin-top:10px;">
     Plateforme de livraison CBD<br>
     Application Mobile iOS · Panel Admin Web · Cloud Functions Firebase<br>
-    ~18 600 lignes Swift · Next.js 16 · 16 Cloud Functions · 15 Collections Firestore<br><br>
+    ~18 600 lignes Swift · Next.js 16 · 22 Cloud Functions · 5 Dashboards Grafana<br><br>
     <strong>Projet RNCP — Février 2026</strong>
   </p>
 </section>
