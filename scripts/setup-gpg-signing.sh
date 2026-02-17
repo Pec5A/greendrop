@@ -132,7 +132,7 @@ fi
 MY_EMAIL="$GIT_EMAIL"
 echo -e "${BLUE}Rebase en cours... (signe uniquement les commits de ${MY_EMAIL})${NC}"
 
-git -c commit.gpgsign=false rebase --root --exec "if [ \"\$(git log -1 --format='%ae')\" = \"${MY_EMAIL}\" ]; then git -c commit.gpgsign=false commit --amend --no-edit -S; fi"
+git -c commit.gpgsign=false rebase --root --exec "AE=\$(git log -1 --format='%ae'); AN=\$(git log -1 --format='%an'); AD=\$(git log -1 --format='%aI'); if [ \"\$AE\" = \"${MY_EMAIL}\" ]; then GIT_COMMITTER_NAME=\"\$AN\" GIT_COMMITTER_EMAIL=\"\$AE\" GIT_COMMITTER_DATE=\"\$AD\" git -c commit.gpgsign=false commit --amend --no-edit -S; else GIT_COMMITTER_NAME=\"\$AN\" GIT_COMMITTER_EMAIL=\"\$AE\" GIT_COMMITTER_DATE=\"\$AD\" git -c commit.gpgsign=false commit --amend --no-edit; fi"
 
 echo ""
 echo -e "${GREEN}Tous tes commits sont maintenant signés !${NC}"
