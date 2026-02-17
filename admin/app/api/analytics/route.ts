@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { rateLimit } from "@/lib/rate-limit"
-import logger from "@/lib/logger"
+import logger, { pushToLoki } from "@/lib/logger"
 
 export async function POST(request: NextRequest) {
   const rateLimitResponse = rateLimit(request, { limit: 120, windowSec: 60 })
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
     const userAgent = request.headers.get("user-agent") || ""
 
-    logger.http("page_view", {
+    const meta = {
       type: "page_view",
       path,
       referrer: referrer || "",
@@ -26,7 +26,10 @@ export async function POST(request: NextRequest) {
       screenHeight: screenHeight || 0,
       ip,
       userAgent,
-    })
+    }
+
+    logger.http("page_view", meta)
+    await pushToLoki("http", "page_view", meta)
 
     return NextResponse.json({ ok: true })
   } catch {

@@ -3,7 +3,7 @@ import { adminAuth, adminDb } from "./firebase-admin"
 import { rateLimit } from "./rate-limit"
 import * as Sentry from "@sentry/nextjs"
 import crypto from "crypto"
-import logger from "./logger"
+import logger, { pushToLoki } from "./logger"
 
 export interface AuthenticatedRequest extends NextRequest {
   userId?: string
@@ -155,23 +155,17 @@ export function withAuth(
       const duration = Date.now() - start
       const logMeta = { method, path, status, duration, userId: auth.userId, userRole: auth.userRole, ip, userAgent }
 
-      if (status >= 500) {
-        logger.error("API request", logMeta)
-      } else if (status >= 400) {
-        logger.warn("API request", logMeta)
-      } else {
-        logger.http("API request", logMeta)
-      }
+      const logLevel = status >= 500 ? "error" : status >= 400 ? "warn" : "http"
+      logger[logLevel === "http" ? "http" : logLevel]("API request", logMeta)
+      await pushToLoki(logLevel, "API request", logMeta)
 
       return response
     } catch (error: any) {
       const duration = Date.now() - start
       Sentry.captureException(error)
-      logger.error("API request failed", {
-        method, path, status: 500, duration,
-        userId: auth.userId, userRole: auth.userRole, ip, userAgent,
-        error: error.message,
-      })
+      const errMeta = { method, path, status: 500, duration, userId: auth.userId, userRole: auth.userRole, ip, userAgent, error: error.message }
+      logger.error("API request failed", errMeta)
+      await pushToLoki("error", "API request failed", errMeta)
       return NextResponse.json({ error: "Internal Server Error", message: error.message }, { status: 500 })
     }
   }
