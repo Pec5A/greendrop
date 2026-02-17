@@ -47,7 +47,7 @@ export const onOrderCreated = functions.firestore
               type: "status",
               title: "Order created",
               description: "Order has been successfully placed",
-              timestamp: admin.firestore.FieldValue.serverTimestamp(),
+              timestamp: new Date().toISOString(),
               actor: "system",
             },
           ],
