@@ -1,0 +1,214 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GRAPHITE",
+      "label": "Graphite",
+      "description": "Grafana Cloud Graphite data source",
+      "type": "datasource",
+      "pluginId": "graphite",
+      "pluginName": "Graphite"
+    }
+  ],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "graphite", "name": "Graphite", "version": "1.0.0" }
+  ],
+  "id": null,
+  "uid": "greendrop-operations",
+  "title": "GreenDrop — Operations",
+  "description": "Monitoring opérationnel : chauffeurs, livraisons, zones",
+  "tags": ["greendrop", "operations", "drivers"],
+  "timezone": "Europe/Paris",
+  "refresh": "5m",
+  "time": { "from": "now-24h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Chauffeurs En Ligne",
+      "type": "gauge",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "target": "greendrop.drivers.online", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 50,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 2 },
+              { "color": "green", "value": 5 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Livraisons Actives",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "target": "greendrop.operations.active_deliveries", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "orange" }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Durée Moyenne Livraison (min)",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        { "target": "greendrop.operations.avg_delivery_time", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "min",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 45 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Taux Succès Livraison (%)",
+      "type": "gauge",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "target": "greendrop.operations.delivery_success_rate", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 80 },
+              { "color": "green", "value": 95 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Utilisation Chauffeurs (%)",
+      "type": "gauge",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 5 },
+      "targets": [
+        { "target": "greendrop.operations.driver_utilization", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Commandes par Statut",
+      "type": "piechart",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 5 },
+      "targets": [
+        { "target": "greendrop.orders.status.pending", "refId": "A" },
+        { "target": "greendrop.orders.status.paid", "refId": "B" },
+        { "target": "greendrop.orders.status.shipped", "refId": "C" },
+        { "target": "greendrop.orders.status.delivered", "refId": "D" },
+        { "target": "greendrop.orders.status.cancelled", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "pending" }, "properties": [{ "id": "color", "value": { "fixedColor": "yellow" } }] },
+          { "matcher": { "id": "byName", "options": "paid" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue" } }] },
+          { "matcher": { "id": "byName", "options": "shipped" }, "properties": [{ "id": "color", "value": { "fixedColor": "orange" } }] },
+          { "matcher": { "id": "byName", "options": "delivered" }, "properties": [{ "id": "color", "value": { "fixedColor": "green" } }] },
+          { "matcher": { "id": "byName", "options": "cancelled" }, "properties": [{ "id": "color", "value": { "fixedColor": "red" } }] }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "title": "Taux Livraison On-Time",
+      "type": "timeseries",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 5 },
+      "targets": [
+        { "target": "greendrop.orders.on_time_rate", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": { "fillOpacity": 15 },
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Chauffeurs Online vs Busy",
+      "type": "timeseries",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+      "targets": [
+        { "target": "greendrop.drivers.online", "refId": "A" },
+        { "target": "greendrop.drivers.busy", "refId": "B" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "fillOpacity": 15 }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "online" }, "properties": [{ "id": "color", "value": { "fixedColor": "green" } }] },
+          { "matcher": { "id": "byName", "options": "busy" }, "properties": [{ "id": "color", "value": { "fixedColor": "orange" } }] }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "title": "Commandes par Zone",
+      "type": "barchart",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+      "targets": [
+        { "target": "greendrop.operations.orders_by_zone.*", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    }
+  ],
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "schemaVersion": 39
+}

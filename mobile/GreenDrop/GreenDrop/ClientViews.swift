@@ -233,6 +233,7 @@ struct ClientHomeView: View {
                 .padding(.vertical)
             }
             .navigationTitle("Boutiques")
+            .onAppear { LoggingService.shared.trackScreenView("Home") }
             .overlay {
                 if dataService.isLoading && filteredShops.isEmpty {
                     VStack(spacing: 12) {
@@ -1970,7 +1971,9 @@ struct CheckoutView: View {
         )
 
         do {
+            LoggingService.shared.trackOrderEvent("order_started")
             let order = try await dataService.createOrder(orderRequest, paymentIntentId: paymentIntentId)
+            LoggingService.shared.trackOrderEvent("order_placed", orderId: order.id)
             cartManager.clearCart()
             promoManager.removePromoCode()
             tipManager.reset()
@@ -1980,6 +1983,7 @@ struct CheckoutView: View {
             confirmedOrderId = order.id
             showOrderConfirmation = true
         } catch {
+            LoggingService.shared.trackOrderEvent("order_error", metadata: ["error": error.localizedDescription])
             isPlacingOrder = false
             paymentErrorMessage = error.localizedDescription
             showPaymentError = true

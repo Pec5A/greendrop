@@ -1,0 +1,225 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GRAPHITE",
+      "label": "Graphite",
+      "description": "Grafana Cloud Graphite data source",
+      "type": "datasource",
+      "pluginId": "graphite",
+      "pluginName": "Graphite"
+    }
+  ],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "graphite", "name": "Graphite", "version": "1.0.0" }
+  ],
+  "id": null,
+  "uid": "greendrop-funnel",
+  "title": "GreenDrop — User Funnel",
+  "description": "Funnel d'acquisition et rétention utilisateurs",
+  "tags": ["greendrop", "funnel", "users"],
+  "timezone": "Europe/Paris",
+  "refresh": "5m",
+  "time": { "from": "now-24h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Inscriptions Aujourd'hui",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "target": "greendrop.funnel.signups_today", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Taux Vérification (%)",
+      "type": "gauge",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "target": "greendrop.funnel.verification_rate", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 50 },
+              { "color": "green", "value": 80 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Conversion Inscription → Commande (%)",
+      "type": "gauge",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        { "target": "greendrop.funnel.signup_to_order_rate", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 20 },
+              { "color": "green", "value": 50 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Vérifications Aujourd'hui",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "target": "greendrop.funnel.verifications_today", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "DAU",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 4 },
+      "targets": [
+        { "target": "greendrop.funnel.dau", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "WAU",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 4 },
+      "targets": [
+        { "target": "greendrop.funnel.wau", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "MAU",
+      "type": "stat",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 4 },
+      "targets": [
+        { "target": "greendrop.funnel.mau", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "purple" }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Inscriptions Timeline",
+      "type": "timeseries",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        { "target": "greendrop.users.new_today", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "custom": { "fillOpacity": 20 }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "Users Total vs Vérifiés",
+      "type": "timeseries",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        { "target": "greendrop.users.total", "refId": "A" },
+        { "target": "greendrop.users.verified", "refId": "B" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "fillOpacity": 15 }
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "Vérifications (Répartition)",
+      "type": "piechart",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
+      "targets": [
+        { "target": "greendrop.verifications.pending", "refId": "A" },
+        { "target": "greendrop.verifications.approved", "refId": "B" },
+        { "target": "greendrop.verifications.rejected", "refId": "C" }
+      ],
+      "fieldConfig": {
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "pending" }, "properties": [{ "id": "color", "value": { "fixedColor": "yellow" } }] },
+          { "matcher": { "id": "byName", "options": "approved" }, "properties": [{ "id": "color", "value": { "fixedColor": "green" } }] },
+          { "matcher": { "id": "byName", "options": "rejected" }, "properties": [{ "id": "color", "value": { "fixedColor": "red" } }] }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "title": "Tendances DAU / WAU / MAU",
+      "type": "timeseries",
+      "datasource": { "type": "graphite", "uid": "${DS_GRAPHITE}" },
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 16 },
+      "targets": [
+        { "target": "greendrop.funnel.dau", "refId": "A" },
+        { "target": "greendrop.funnel.wau", "refId": "B" },
+        { "target": "greendrop.funnel.mau", "refId": "C" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "dau" }, "properties": [{ "id": "color", "value": { "fixedColor": "green" } }] },
+          { "matcher": { "id": "byName", "options": "wau" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue" } }] },
+          { "matcher": { "id": "byName", "options": "mau" }, "properties": [{ "id": "color", "value": { "fixedColor": "purple" } }] }
+        ]
+      }
+    }
+  ],
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "schemaVersion": 39
+}

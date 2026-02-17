@@ -17,6 +17,7 @@ import {
   Boxes,
   Truck,
   MessageSquare,
+  Activity,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -46,6 +47,10 @@ const navigationGroups = [
     ],
   },
   {
+    title: "monitoring",
+    items: [{ href: "/monitoring", label: "monitoring", icon: Activity }],
+  },
+  {
     title: "settings",
     items: [{ href: "/config", label: "configuration", icon: Settings }],
   },
@@ -61,12 +66,14 @@ export function Sidebar() {
       main: "Main",
       operations: "Operations",
       compliance: "Compliance",
+      monitoring: "Monitoring",
       settings: "Settings",
     },
     fr: {
       main: "Principal",
       operations: "Opérations",
       compliance: "Conformité",
+      monitoring: "Monitoring",
       settings: "Paramètres",
     },
   }

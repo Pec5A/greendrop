@@ -167,6 +167,131 @@ groups:
           summary: "Latence API moyenne supérieure à 2 secondes"
           description: "Latence moyenne: {{ $values.A }}ms sur les 15 dernières minutes."
 
+      # ── Mobile error rate > 1% ──────────────────────
+      - uid: greendrop-mobile-error-rate
+        title: "Mobile: taux d'erreur > 1%"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: loki
+            model:
+              expr: "sum(count_over_time({app=\"greendrop-mobile\"} | json | level=\"error\" [10m])) / sum(count_over_time({app=\"greendrop-mobile\"} | json [10m])) * 100"
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [1]
+        for: 10m
+        labels:
+          severity: critical
+          team: mobile
+        annotations:
+          summary: "Taux d'erreur mobile supérieur à 1%"
+          description: "{{ $values.A }}% des événements mobile sont des erreurs depuis 10 min."
+
+      # ── Admin API error rate > 5% ──────────────────
+      - uid: greendrop-admin-api-errors
+        title: "Admin: taux d'erreur API > 5%"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: loki
+            model:
+              expr: "sum(count_over_time({app=\"greendrop-admin\"} | json | method != `` | status >= 500 [10m])) / sum(count_over_time({app=\"greendrop-admin\"} | json | method != `` [10m])) * 100"
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [5]
+        for: 10m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "Taux d'erreur API admin supérieur à 5%"
+          description: "{{ $values.A }}% des requêtes API admin renvoient une erreur 5xx."
+
+      # ── Aucune inscription depuis 24h ──────────────
+      - uid: greendrop-no-signups
+        title: "Aucune inscription depuis 24h"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.funnel.signups_today
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+        for: 24h
+        labels:
+          severity: warning
+          team: growth
+        annotations:
+          summary: "Aucune nouvelle inscription depuis 24h"
+          description: "0 inscriptions aujourd'hui. Vérifiez que le flux d'inscription fonctionne."
+
+      # ── Driver utilization > 90% ───────────────────
+      - uid: greendrop-driver-overload
+        title: "Utilisation chauffeurs > 90%"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: graphite
+            model:
+              target: greendrop.operations.driver_utilization
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [90]
+        for: 15m
+        labels:
+          severity: warning
+          team: operations
+        annotations:
+          summary: "Chauffeurs surchargés : utilisation > 90%"
+          description: "{{ $values.A }}% d'utilisation. Recrutez des chauffeurs ou limitez les commandes."
+
+      # ── Pic visiteurs admin > 50 sessions/5min ─────
+      - uid: greendrop-admin-traffic-spike
+        title: "Pic de sessions admin > 50/5min"
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: loki
+            model:
+              expr: "count(sum by (sessionId) (count_over_time({app=\"greendrop-admin\"} | json [5m])))"
+          - refId: C
+            datasourceUid: "-100"
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [50]
+        for: 5m
+        labels:
+          severity: info
+          team: engineering
+        annotations:
+          summary: "Pic de trafic sur le panneau admin"
+          description: "{{ $values.A }} sessions admin actives en 5 min. Possible activité inhabituelle."
+
       # ── Baisse de revenu journalier ────────────────
       - uid: greendrop-revenue-drop
         title: "Revenu journalier = 0€ après 12h"

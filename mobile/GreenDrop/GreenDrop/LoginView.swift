@@ -184,7 +184,9 @@ struct LoginView: View {
         Task {
             do {
                 try await authService.signIn(email: email, password: password)
+                LoggingService.shared.log("login_success", metadata: ["method": "email"])
             } catch {
+                LoggingService.shared.log("login_failure", level: "warn", metadata: ["method": "email", "error": error.localizedDescription])
             }
             isLoading = false
         }
@@ -195,7 +197,9 @@ struct LoginView: View {
         Task {
             do {
                 try await authService.signInWithGoogle()
+                LoggingService.shared.log("login_success", metadata: ["method": "google"])
             } catch {
+                LoggingService.shared.log("login_failure", level: "warn", metadata: ["method": "google", "error": error.localizedDescription])
             }
             isLoading = false
         }

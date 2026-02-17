@@ -160,11 +160,21 @@ class APIService {
         }
 
         do {
+            let start = CFAbsoluteTimeGetCurrent()
             let (data, response) = try await session.data(for: request)
+            let durationMs = Int((CFAbsoluteTimeGetCurrent() - start) * 1000)
 
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.noData
             }
+
+            // Track API call
+            LoggingService.shared.trackAPICall(
+                endpoint: endpoint,
+                method: method,
+                durationMs: durationMs,
+                statusCode: httpResponse.statusCode
+            )
 
             // Handle HTTP errors
             switch httpResponse.statusCode {

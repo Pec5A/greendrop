@@ -24,6 +24,9 @@ export { updateDriverStatus } from "./endpoints/update-driver-status";
 export { uploadFile } from "./endpoints/upload-file";
 export { sendNotification, registerFCMToken } from "./endpoints/send-notification";
 
+// Mobile Logging
+export { logMobileEvents } from "./endpoints/log-mobile-events";
+
 // ========================================
 // TRIGGERS (Automatiques)
 // ========================================
@@ -40,3 +43,4 @@ export { onDisputeCreated } from "./triggers/dispute-created";
 // ========================================
 
 export { pushMetrics } from "./triggers/push-metrics";
+export { healthCheck } from "./triggers/health-check";

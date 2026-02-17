@@ -4,7 +4,9 @@ import CoreLocation
 import MapKit
 import FirebaseCore
 import FirebaseCrashlytics
+import FirebaseAnalytics
 import GoogleSignIn
+import Sentry
 
 @main
 struct GreenDropApp: App {
@@ -14,6 +16,17 @@ struct GreenDropApp: App {
         FirebaseApp.configure()
         // Enable Crashlytics for crash reporting
         Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
+
+        // Initialize Sentry for error tracking
+        SentrySDK.start { options in
+            options.dsn = MobileConfig.sentryDSN
+            options.tracesSampleRate = 0.1
+            options.enableAutoSessionTracking = true
+            options.attachScreenshot = true
+        }
+
+        // Log app launch
+        LoggingService.shared.log("app_launch")
     }
 
     var body: some Scene {

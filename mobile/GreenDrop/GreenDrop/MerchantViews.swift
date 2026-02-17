@@ -168,6 +168,7 @@ struct MerchantDashboardView: View {
             }
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Dashboard")
+            .onAppear { LoggingService.shared.trackScreenView("MerchantDashboard") }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: ShopSettingsView(shopId: shopId)) {

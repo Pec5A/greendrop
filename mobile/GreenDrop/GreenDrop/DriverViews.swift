@@ -101,6 +101,7 @@ struct DriverDashboardView: View {
                 .padding()
             }
             .navigationTitle("Dashboard")
+            .onAppear { LoggingService.shared.trackScreenView("DriverDashboard") }
             .onChange(of: isOnline) { _, online in
                 Task {
                     await dataService.updateDriverStatus(online ? "online" : "offline")
@@ -943,6 +944,7 @@ struct DriverDeliveriesView: View {
                 }
             }
             .navigationTitle("Livraisons")
+            .onAppear { LoggingService.shared.trackScreenView("Deliveries") }
         }
     }
 }
