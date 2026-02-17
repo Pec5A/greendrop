@@ -32,6 +32,8 @@ export { onOrderStatusChange } from "./triggers/order-status-change";
 export { onDriverLocationUpdate } from "./triggers/driver-location-update";
 export { onOrderCreated } from "./triggers/order-created";
 export { onUserWriteSyncDriver } from "./triggers/sync-driver";
+export { onVerificationSubmitted } from "./triggers/verification-submitted";
+export { onDisputeCreated } from "./triggers/dispute-created";
 
 // ========================================
 // SCHEDULED (Métriques & Monitoring)

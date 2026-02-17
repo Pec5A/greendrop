@@ -11,10 +11,13 @@ import { CommandPalette } from "./command-palette"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/lib/language-context"
+import { useNotifications } from "@/hooks/use-notifications"
 
 export function Topbar() {
   const pathname = usePathname()
   const { t } = useLanguage()
+  const { notifications } = useNotifications()
+  const unreadCount = notifications.filter((n) => !n.read).length
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
 
@@ -55,7 +58,9 @@ export function Topbar() {
 
           <Button variant="ghost" size="icon" className="relative" onClick={() => setNotificationsOpen(true)}>
             <Bell className="h-5 w-5" />
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">3</Badge>
+            {unreadCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">{unreadCount}</Badge>
+            )}
           </Button>
 
           <LanguageToggle />

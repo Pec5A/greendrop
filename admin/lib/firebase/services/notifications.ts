@@ -50,7 +50,7 @@ export const subscribeToNotifications = (
   count: number = 50
 ): Unsubscribe => {
   const notificationsRef = collection(db, COLLECTIONS.NOTIFICATIONS)
-  const q = query(notificationsRef, orderBy("timestamp", "desc"), limit(count))
+  const q = query(notificationsRef, where("target", "==", "admin"), orderBy("timestamp", "desc"), limit(count))
 
   return onSnapshot(
     q,
@@ -71,6 +71,7 @@ export const createNotification = async (
   const notificationsRef = collection(db, COLLECTIONS.NOTIFICATIONS)
   const docRef = await addDoc(notificationsRef, {
     ...notificationData,
+    target: "admin",
     read: false,
     timestamp: serverTimestamp(),
   })
@@ -84,7 +85,7 @@ export const markNotificationAsRead = async (notificationId: string): Promise<vo
 
 export const markAllNotificationsAsRead = async (): Promise<void> => {
   const notificationsRef = collection(db, COLLECTIONS.NOTIFICATIONS)
-  const unreadQuery = query(notificationsRef, where("read", "==", false))
+  const unreadQuery = query(notificationsRef, where("target", "==", "admin"), where("read", "==", false))
   const snapshot = await getDocs(unreadQuery)
 
   const updates = snapshot.docs.map((docSnapshot) => updateDoc(docSnapshot.ref, { read: true }))

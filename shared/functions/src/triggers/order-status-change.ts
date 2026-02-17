@@ -61,7 +61,35 @@ export const onOrderStatusChange = functions.firestore
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
-      // 3. If order is completed or cancelled, release driver
+      // 3. Admin notification on cancellation
+      if (after.status === "cancelled") {
+        const adminNotifRef = db.collection("notifications").doc();
+        batch.set(adminNotifRef, {
+          target: "admin",
+          type: "warning",
+          category: "order",
+          title: "Commande annulée",
+          message: `Commande #${orderId.slice(-6).toUpperCase()} annulée par ${after.userName || after.userId}`,
+          read: false,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      // 4. Admin notification on delivery
+      if (after.status === "delivered") {
+        const adminNotifRef = db.collection("notifications").doc();
+        batch.set(adminNotifRef, {
+          target: "admin",
+          type: "success",
+          category: "order",
+          title: "Commande livrée",
+          message: `Commande #${orderId.slice(-6).toUpperCase()} livrée avec succès`,
+          read: false,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      // 5. If order is completed or cancelled, release driver
       if (
         (after.status === "delivered" || after.status === "cancelled") &&
         after.driverId
@@ -87,7 +115,7 @@ export const onOrderStatusChange = functions.firestore
         });
       }
 
-      // 4. If order is assigned to driver, notify driver
+      // 6. If order is assigned to driver, notify driver
       if (after.status === "shipped" && after.driverId && !before.driverId) {
         const driverNotifRef = db.collection("notifications").doc();
         batch.set(driverNotifRef, {

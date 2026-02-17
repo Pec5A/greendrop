@@ -54,8 +54,17 @@ export const onOrderCreated = functions.firestore
         });
       }
 
-      // 3. Send notification to admin (optional - for real-time dashboard alerts)
-      // You can implement admin real-time notifications here if needed
+      // 3. Send notification to admin dashboard
+      const adminNotifRef = db.collection("notifications").doc();
+      batch.set(adminNotifRef, {
+        target: "admin",
+        type: "info",
+        category: "order",
+        title: "Nouvelle commande",
+        message: `Commande #${orderId.slice(-6).toUpperCase()} — ${order.items?.length || 0} article(s), ${order.total ?? 0} MAD`,
+        read: false,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
 
       await batch.commit();
 
