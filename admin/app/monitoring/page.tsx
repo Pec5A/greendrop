@@ -1,59 +1,74 @@
 "use client"
 
 import { AdminLayout } from "@/components/admin/admin-layout"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent } from "@/components/ui/card"
 import { useLanguage } from "@/lib/language-context"
-import { ExternalLink } from "lucide-react"
+import {
+  BarChart3,
+  Truck,
+  Monitor,
+  Smartphone,
+  Users,
+  ExternalLink,
+} from "lucide-react"
 
-const GRAFANA_URL = process.env.NEXT_PUBLIC_GRAFANA_URL || ""
-
-/**
- * Each dashboard can be embedded via its Grafana Public Dashboard URL.
- * To get the public URL:
- *   1. Open the dashboard in Grafana
- *   2. Click Share → Public dashboard → Enable
- *   3. Copy the public URL
- *   4. Set it in admin/.env as NEXT_PUBLIC_GRAFANA_PUBLIC_<ID>
- *
- * Falls back to a direct link to Grafana if no public URL is set.
- */
 const dashboards = [
   {
     id: "kpi",
-    uid: "greendrop-kpi",
     labelEn: "Business KPIs",
     labelFr: "KPIs Métier",
-    publicUrl: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_KPI || "",
+    descEn: "Orders, revenue, users, drivers, verifications",
+    descFr: "Commandes, revenu, utilisateurs, chauffeurs, vérifications",
+    icon: BarChart3,
+    color: "text-green-500",
+    bg: "bg-green-500/10",
+    url: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_KPI || "",
   },
   {
     id: "operations",
-    uid: "greendrop-operations",
     labelEn: "Operations",
     labelFr: "Opérations",
-    publicUrl: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_OPERATIONS || "",
+    descEn: "Delivery times, driver utilization, orders by zone",
+    descFr: "Durée livraison, utilisation chauffeurs, commandes par zone",
+    icon: Truck,
+    color: "text-orange-500",
+    bg: "bg-orange-500/10",
+    url: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_OPERATIONS || "",
   },
   {
     id: "admin",
-    uid: "greendrop-admin",
     labelEn: "Admin Performance",
     labelFr: "Performance Admin",
-    publicUrl: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_ADMIN || "",
+    descEn: "Page views, API latency p50/p95/p99, error rates",
+    descFr: "Pages vues, latence API p50/p95/p99, taux d'erreurs",
+    icon: Monitor,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    url: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_ADMIN || "",
   },
   {
     id: "mobile",
-    uid: "greendrop-mobile",
     labelEn: "Mobile",
     labelFr: "Mobile",
-    publicUrl: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_MOBILE || "",
+    descEn: "App launches, sessions, API errors, version distribution",
+    descFr: "Lancements, sessions, erreurs API, distribution versions",
+    icon: Smartphone,
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+    url: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_MOBILE || "",
   },
   {
     id: "funnel",
-    uid: "greendrop-funnel",
     labelEn: "User Funnel",
     labelFr: "Funnel Utilisateurs",
-    publicUrl: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_FUNNEL || "",
+    descEn: "DAU/WAU/MAU, signup-to-order rate, verification rate",
+    descFr: "DAU/WAU/MAU, taux conversion inscription→commande, vérifications",
+    icon: Users,
+    color: "text-pink-500",
+    bg: "bg-pink-500/10",
+    url: process.env.NEXT_PUBLIC_GRAFANA_PUBLIC_FUNNEL || "",
   },
-] as const
+]
 
 export default function MonitoringPage() {
   const { language } = useLanguage()
@@ -65,85 +80,51 @@ export default function MonitoringPage() {
           <h1 className="text-3xl font-bold tracking-tight">Monitoring</h1>
           <p className="text-muted-foreground mt-1">
             {language === "fr"
-              ? "Dashboards temps réel de la plateforme"
-              : "Real-time platform dashboards"}
+              ? "Dashboards temps réel de la plateforme — cliquez pour ouvrir dans Grafana"
+              : "Real-time platform dashboards — click to open in Grafana"}
           </p>
         </div>
 
-        <Tabs defaultValue="kpi" className="w-full">
-          <TabsList>
-            {dashboards.map((d) => (
-              <TabsTrigger key={d.id} value={d.id}>
-                {language === "fr" ? d.labelFr : d.labelEn}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {dashboards.map((d) => {
+            const Icon = d.icon
             const label = language === "fr" ? d.labelFr : d.labelEn
-            const directUrl = GRAFANA_URL
-              ? `${GRAFANA_URL}/d/${d.uid}?orgId=1&theme=light`
-              : ""
+            const desc = language === "fr" ? d.descFr : d.descEn
 
-            // Public dashboard URL available → embed as iframe
-            if (d.publicUrl) {
-              return (
-                <TabsContent key={d.id} value={d.id} className="mt-4">
-                  <div className="flex justify-end mb-2">
-                    <a
-                      href={d.publicUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {language === "fr" ? "Ouvrir dans Grafana" : "Open in Grafana"}
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  </div>
-                  <iframe
-                    src={d.publicUrl}
-                    className="w-full rounded-lg border"
-                    style={{ height: "calc(100vh - 250px)", minHeight: "600px" }}
-                    title={label}
-                  />
-                </TabsContent>
-              )
-            }
-
-            // No public URL → show link to open in Grafana directly
             return (
-              <TabsContent key={d.id} value={d.id} className="mt-4">
-                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-16 gap-4">
-                  <div className="text-4xl">📊</div>
-                  <h3 className="text-lg font-semibold">{label}</h3>
-                  <p className="text-muted-foreground text-center max-w-md text-sm">
-                    {language === "fr"
-                      ? "Activez le Public Dashboard dans Grafana pour l'afficher ici, ou ouvrez-le directement."
-                      : "Enable Public Dashboard in Grafana to display it here, or open it directly."}
-                  </p>
-                  {directUrl && (
-                    <a
-                      href={directUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-                    >
-                      {language === "fr" ? "Ouvrir dans Grafana" : "Open in Grafana"}
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  )}
-                  {!directUrl && (
-                    <p className="text-xs text-muted-foreground">
-                      {language === "fr"
-                        ? "Configurez NEXT_PUBLIC_GRAFANA_URL dans .env"
-                        : "Set NEXT_PUBLIC_GRAFANA_URL in .env"}
+              <a
+                key={d.id}
+                href={d.url || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={d.url ? "group" : "pointer-events-none opacity-50"}
+              >
+                <Card className="h-full transition-all group-hover:shadow-md group-hover:border-primary/30">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`rounded-lg p-3 ${d.bg}`}>
+                        <Icon className={`h-6 w-6 ${d.color}`} />
+                      </div>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1">{label}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {desc}
                     </p>
-                  )}
-                </div>
-              </TabsContent>
+                  </CardContent>
+                </Card>
+              </a>
             )
           })}
-        </Tabs>
+        </div>
+
+        <div className="rounded-lg border bg-muted/50 p-4">
+          <p className="text-sm text-muted-foreground">
+            {language === "fr"
+              ? "Les alertes sont envoyées automatiquement sur Discord et en notification push quand un seuil critique est atteint (chauffeurs, litiges, erreurs, livraisons)."
+              : "Alerts are automatically sent to Discord and as push notifications when critical thresholds are reached (drivers, disputes, errors, deliveries)."}
+          </p>
+        </div>
       </div>
     </AdminLayout>
   )
